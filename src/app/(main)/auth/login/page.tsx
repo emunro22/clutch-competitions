@@ -23,23 +23,23 @@ export default function LoginPage() {
       <div className="animate-fade-in-up w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center font-bold text-white text-xl">
-              SC
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center font-black text-background text-xl">
+              VC
             </div>
           </Link>
-          <h1 className="text-2xl font-bold text-foreground mb-2">Welcome Back</h1>
-          <p className="text-muted">Log in to your ScotComps account</p>
+          <h1 className="text-2xl font-black text-foreground mb-2">Welcome Back</h1>
+          <p className="text-muted font-medium">Log in to your Vault Competitions account</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-6 sm:p-8 space-y-5">
           {error && (
-            <div className="bg-danger/10 border border-danger/20 text-danger text-sm rounded-xl p-3">
+            <div className="bg-danger/10 border border-danger/20 text-danger text-sm font-semibold rounded-xl p-3">
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">
+            <label className="block text-sm font-semibold text-foreground mb-1.5">
               Email Address
             </label>
             <input
@@ -54,8 +54,8 @@ export default function LoginPage() {
 
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-sm font-medium text-foreground">Password</label>
-              <a href="#" className="text-xs text-primary-light hover:text-primary transition-colors">
+              <label className="text-sm font-semibold text-foreground">Password</label>
+              <a href="#" className="text-xs text-primary hover:text-primary-light font-semibold transition-colors">
                 Forgot password?
               </a>
             </div>
@@ -72,15 +72,15 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 bg-primary hover:bg-primary-light text-white font-semibold rounded-xl transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="w-full py-3.5 bg-primary hover:bg-primary-light text-background font-bold rounded-xl transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
             {loading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
 
-        <p className="text-center text-sm text-muted mt-6">
+        <p className="text-center text-sm text-muted mt-6 font-medium">
           Don&apos;t have an account?{' '}
-          <Link href="/auth/register" className="text-primary-light hover:text-primary font-medium transition-colors">
+          <Link href="/auth/register" className="text-primary hover:text-primary-light font-bold transition-colors">
             Sign up free
           </Link>
         </p>

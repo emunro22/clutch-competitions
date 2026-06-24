@@ -47,20 +47,18 @@ export default function AdminSidebar() {
 
   return (
     <aside className="w-64 bg-surface border-r border-border min-h-screen p-4 hidden lg:block">
-      {/* Admin Header */}
       <div className="mb-8 px-3">
         <Link href="/" className="flex items-center gap-2 mb-1">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center font-bold text-white text-sm">
-            SC
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-light flex items-center justify-center font-black text-background text-sm">
+            VC
           </div>
-          <span className="text-lg font-bold text-foreground">
-            Scot<span className="text-primary-light">Comps</span>
+          <span className="text-lg font-extrabold text-foreground">
+            Vault<span className="text-primary">Comps</span>
           </span>
         </Link>
-        <p className="text-xs text-muted ml-10">Admin Portal</p>
+        <p className="text-xs text-muted ml-10 font-semibold">Admin Portal</p>
       </div>
 
-      {/* Nav Links */}
       <nav className="space-y-1">
         {adminLinks.map((link) => {
           const isActive = pathname === link.href || (link.href !== '/admin' && pathname.startsWith(link.href));
@@ -68,9 +66,9 @@ export default function AdminSidebar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
                 isActive
-                  ? 'bg-primary/10 text-primary-light border border-primary/20'
+                  ? 'bg-primary/10 text-primary border border-primary/20'
                   : 'text-muted hover:text-foreground hover:bg-white/5'
               }`}
             >
@@ -81,11 +79,10 @@ export default function AdminSidebar() {
         })}
       </nav>
 
-      {/* Back to site */}
       <div className="absolute bottom-4 left-4 right-4">
         <Link
           href="/"
-          className="flex items-center gap-2 px-3 py-2.5 text-sm text-muted hover:text-foreground transition-colors"
+          className="flex items-center gap-2 px-3 py-2.5 text-sm text-muted hover:text-foreground transition-colors font-medium"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />

@@ -1,33 +1,34 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import './globals.css';
 
-const inter = Inter({
-  variable: '--font-geist-sans',
+const montserrat = Montserrat({
+  variable: '--font-montserrat',
   subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800', '900'],
 });
 
 export const metadata: Metadata = {
   title: {
-    default: 'ScotComps — Scotland\'s Premier Prize Competitions',
-    template: '%s | ScotComps',
+    default: 'Vault Competitions — Win Premium Prizes',
+    template: '%s | Vault Competitions',
   },
   description:
-    'Win incredible prizes from dream cars to life-changing cash. Scotland\'s most trusted competition platform with verified draws and real winners. Tickets from just £0.49.',
+    'Win incredible prizes from dream cars to life-changing cash. The UK\'s most trusted competition platform with verified draws and real winners. Tickets from just £0.49.',
   keywords: [
-    'competitions Scotland',
-    'win prizes Scotland',
-    'Scottish competitions',
-    'prize draws Scotland',
-    'win a car Scotland',
+    'competitions UK',
+    'win prizes UK',
+    'prize competitions',
+    'prize draws UK',
+    'win a car UK',
     'cash prizes UK',
     'online competitions UK',
-    'ScotComps',
+    'Vault Competitions',
   ],
   openGraph: {
-    title: 'ScotComps — Scotland\'s Premier Prize Competitions',
+    title: 'Vault Competitions — Win Premium Prizes',
     description: 'Win incredible prizes from dream cars to life-changing cash. Tickets from just £0.49.',
-    siteName: 'ScotComps',
+    siteName: 'Vault Competitions',
     locale: 'en_GB',
     type: 'website',
   },
@@ -39,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang="en" className={`${montserrat.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         {children}
       </body>

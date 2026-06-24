@@ -44,6 +44,7 @@ export const competitions = pgTable('competitions', {
   status: competitionStatusEnum('status').default('draft').notNull(),
   featured: boolean('featured').default(false).notNull(),
   maxPerPerson: integer('max_per_person').default(100).notNull(),
+  minimumSoldPercentage: integer('minimum_sold_percentage').default(85).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

@@ -13,10 +13,10 @@ export default function ContactPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
       <div className="animate-fade-in-up text-center mb-12">
-        <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+        <h1 className="text-3xl sm:text-4xl font-black text-foreground mb-4">
           Get In Touch
         </h1>
-        <p className="text-muted text-lg max-w-2xl mx-auto">
+        <p className="text-muted text-lg max-w-2xl mx-auto font-medium">
           Have a question, feedback, or need support? We&apos;d love to hear from you.
         </p>
       </div>
@@ -31,7 +31,7 @@ export default function ContactPage() {
                 </svg>
               ),
               title: 'Email Us',
-              value: 'hello@scotcomps.co.uk',
+              value: 'hello@vaultcompetitions.co.uk',
               sub: 'We reply within 24 hours',
             },
             {
@@ -42,8 +42,8 @@ export default function ContactPage() {
                 </svg>
               ),
               title: 'Based In',
-              value: 'Glasgow, Scotland',
-              sub: 'Proudly Scottish',
+              value: 'United Kingdom',
+              sub: 'UK registered company',
             },
             {
               icon: (
@@ -61,23 +61,23 @@ export default function ContactPage() {
                 {item.icon}
               </div>
               <div>
-                <h3 className="font-medium text-foreground">{item.title}</h3>
-                <p className="text-sm text-foreground">{item.value}</p>
-                <p className="text-xs text-muted mt-0.5">{item.sub}</p>
+                <h3 className="font-bold text-foreground">{item.title}</h3>
+                <p className="text-sm text-foreground font-medium">{item.value}</p>
+                <p className="text-xs text-muted mt-0.5 font-medium">{item.sub}</p>
               </div>
             </div>
           ))}
 
           <div className="bg-card border border-border rounded-xl p-5">
-            <h3 className="font-medium text-foreground mb-3">Follow Us</h3>
+            <h3 className="font-bold text-foreground mb-3">Follow Us</h3>
             <div className="flex gap-3">
               {['Facebook', 'Instagram', 'TikTok', 'YouTube'].map((s) => (
                 <a
                   key={s}
                   href="#"
-                  className="w-10 h-10 bg-background rounded-lg border border-border flex items-center justify-center text-muted hover:text-foreground hover:border-primary/50 transition-colors"
+                  className="w-10 h-10 bg-background rounded-lg border border-border flex items-center justify-center text-muted hover:text-primary hover:border-primary/50 transition-colors"
                 >
-                  <span className="text-xs font-medium">{s[0]}</span>
+                  <span className="text-xs font-bold">{s[0]}</span>
                 </a>
               ))}
             </div>
@@ -88,11 +88,11 @@ export default function ContactPage() {
           {submitted ? (
             <div className="bg-card border border-success/30 rounded-2xl p-10 text-center">
               <div className="text-5xl mb-4">✅</div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">Message Sent!</h2>
-              <p className="text-muted mb-6">We&apos;ll get back to you within 24 hours.</p>
+              <h2 className="text-2xl font-black text-foreground mb-2">Message Sent!</h2>
+              <p className="text-muted mb-6 font-medium">We&apos;ll get back to you within 24 hours.</p>
               <button
                 onClick={() => setSubmitted(false)}
-                className="px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-light transition-colors"
+                className="px-6 py-3 bg-primary text-background font-bold rounded-xl hover:bg-primary-light transition-colors"
               >
                 Send Another Message
               </button>
@@ -101,43 +101,20 @@ export default function ContactPage() {
             <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-6 sm:p-8 space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-1.5">
-                    First Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
-                    placeholder="John"
-                  />
+                  <label className="block text-sm font-semibold text-foreground mb-1.5">First Name</label>
+                  <input type="text" required className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="John" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-1.5">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
-                    placeholder="Smith"
-                  />
+                  <label className="block text-sm font-semibold text-foreground mb-1.5">Last Name</label>
+                  <input type="text" required className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="Smith" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1.5">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  required
-                  className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
-                  placeholder="john@example.com"
-                />
+                <label className="block text-sm font-semibold text-foreground mb-1.5">Email Address</label>
+                <input type="email" required className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="john@example.com" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1.5">
-                  Subject
-                </label>
+                <label className="block text-sm font-semibold text-foreground mb-1.5">Subject</label>
                 <select className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors cursor-pointer">
                   <option>General Enquiry</option>
                   <option>Prize Question</option>
@@ -147,20 +124,10 @@ export default function ContactPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1.5">
-                  Message
-                </label>
-                <textarea
-                  required
-                  rows={5}
-                  className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors resize-none"
-                  placeholder="How can we help?"
-                />
+                <label className="block text-sm font-semibold text-foreground mb-1.5">Message</label>
+                <textarea required rows={5} className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors resize-none" placeholder="How can we help?" />
               </div>
-              <button
-                type="submit"
-                className="w-full py-3.5 bg-primary hover:bg-primary-light text-white font-semibold rounded-xl transition-all hover:scale-[1.02]"
-              >
+              <button type="submit" className="w-full py-3.5 bg-primary hover:bg-primary-light text-background font-bold rounded-xl transition-all hover:scale-[1.02]">
                 Send Message
               </button>
             </form>

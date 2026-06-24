@@ -34,7 +34,7 @@ const steps = [
   {
     number: '04',
     title: 'Claim Your Prize',
-    description: 'Winners are contacted directly. Cash prizes within 48 hours, physical prizes delivered to your door.',
+    description: 'Winners are contacted directly. Cash within 48 hours, physical prizes delivered to your door.',
     icon: (
       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
@@ -48,10 +48,10 @@ export default function HowItWorksSection() {
     <section className="py-20 lg:py-28">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-14">
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+          <h2 className="text-3xl sm:text-4xl font-black text-foreground mb-4">
             How It Works
           </h2>
-          <p className="text-muted text-lg max-w-2xl mx-auto">
+          <p className="text-muted text-lg max-w-2xl mx-auto font-medium">
             Winning is simple. Four easy steps and you could be our next big winner.
           </p>
         </FadeIn>
@@ -63,13 +63,13 @@ export default function HowItWorksSection() {
               delay={i * 100}
               className="relative bg-card border border-border rounded-2xl p-6 text-center hover:border-primary/50 transition-colors group"
             >
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-white text-sm font-bold px-3 py-1 rounded-lg">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-background text-sm font-black px-3 py-1 rounded-lg">
                 {step.number}
               </div>
               <div className="w-16 h-16 mx-auto mt-4 mb-4 bg-primary/10 rounded-2xl flex items-center justify-center text-primary group-hover:bg-primary/20 transition-colors">
                 {step.icon}
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">{step.title}</h3>
+              <h3 className="text-lg font-bold text-foreground mb-2">{step.title}</h3>
               <p className="text-sm text-muted leading-relaxed">{step.description}</p>
             </FadeIn>
           ))}

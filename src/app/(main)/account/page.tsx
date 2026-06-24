@@ -20,8 +20,8 @@ export default function AccountPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
       <div className="animate-fade-in-up mb-10">
-        <h1 className="text-3xl font-bold text-foreground mb-2">My Account</h1>
-        <p className="text-muted">Welcome back, {mockUser.name}</p>
+        <h1 className="text-3xl font-black text-foreground mb-2">My Account</h1>
+        <p className="text-muted font-medium">Welcome back, {mockUser.name}</p>
       </div>
 
       <div className="animate-fade-in-up grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10" style={{ animationDelay: '100ms' }}>
@@ -32,8 +32,8 @@ export default function AccountPage() {
           { label: 'Member Since', value: new Date(mockUser.memberSince).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) },
         ].map((stat) => (
           <div key={stat.label} className="bg-card border border-border rounded-xl p-5">
-            <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-            <p className="text-xs text-muted mt-1">{stat.label}</p>
+            <p className="text-2xl font-black text-foreground">{stat.value}</p>
+            <p className="text-xs text-muted mt-1 font-semibold">{stat.label}</p>
           </div>
         ))}
       </div>
@@ -41,8 +41,8 @@ export default function AccountPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="animate-fade-in-up lg:col-span-2" style={{ animationDelay: '200ms' }}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-foreground">Recent Entries</h2>
-            <Link href="/account/tickets" className="text-sm text-primary-light hover:text-primary transition-colors">
+            <h2 className="text-xl font-bold text-foreground">Recent Entries</h2>
+            <Link href="/account/tickets" className="text-sm text-primary hover:text-primary-light font-bold transition-colors">
               View All
             </Link>
           </div>
@@ -51,22 +51,22 @@ export default function AccountPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-5 py-3">Competition</th>
-                    <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-5 py-3">Tickets</th>
-                    <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-5 py-3">Date</th>
-                    <th className="text-left text-xs font-medium text-muted uppercase tracking-wider px-5 py-3">Status</th>
+                    <th className="text-left text-xs font-bold text-muted uppercase tracking-wider px-5 py-3">Competition</th>
+                    <th className="text-left text-xs font-bold text-muted uppercase tracking-wider px-5 py-3">Tickets</th>
+                    <th className="text-left text-xs font-bold text-muted uppercase tracking-wider px-5 py-3">Date</th>
+                    <th className="text-left text-xs font-bold text-muted uppercase tracking-wider px-5 py-3">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {mockRecentTickets.map((ticket) => (
                     <tr key={ticket.id} className="border-b border-border/50 last:border-0 hover:bg-white/[0.02]">
-                      <td className="px-5 py-4 text-sm text-foreground font-medium">{ticket.competition}</td>
-                      <td className="px-5 py-4 text-sm text-muted">{ticket.tickets}</td>
-                      <td className="px-5 py-4 text-sm text-muted">
+                      <td className="px-5 py-4 text-sm text-foreground font-semibold">{ticket.competition}</td>
+                      <td className="px-5 py-4 text-sm text-muted font-medium">{ticket.tickets}</td>
+                      <td className="px-5 py-4 text-sm text-muted font-medium">
                         {new Date(ticket.date).toLocaleDateString('en-GB')}
                       </td>
                       <td className="px-5 py-4">
-                        <span className={`text-xs font-medium px-2.5 py-1 rounded-lg ${
+                        <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
                           ticket.status === 'active'
                             ? 'bg-success/10 text-success'
                             : 'bg-muted/10 text-muted'
@@ -83,24 +83,24 @@ export default function AccountPage() {
         </div>
 
         <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
-          <h2 className="text-xl font-semibold text-foreground mb-4">Profile</h2>
+          <h2 className="text-xl font-bold text-foreground mb-4">Profile</h2>
           <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
             <div className="flex items-center gap-4 pb-5 border-b border-border">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-xl font-bold">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center text-background text-xl font-black">
                 {mockUser.name[0]}
               </div>
               <div>
-                <p className="font-semibold text-foreground">{mockUser.name}</p>
-                <p className="text-sm text-muted">{mockUser.email}</p>
+                <p className="font-bold text-foreground">{mockUser.name}</p>
+                <p className="text-sm text-muted font-medium">{mockUser.email}</p>
               </div>
             </div>
-            <button className="w-full py-2.5 bg-background border border-border text-foreground text-sm font-medium rounded-xl hover:border-primary/50 transition-colors">
+            <button className="w-full py-2.5 bg-background border border-border text-foreground text-sm font-bold rounded-xl hover:border-primary/50 transition-colors">
               Edit Profile
             </button>
-            <button className="w-full py-2.5 bg-background border border-border text-foreground text-sm font-medium rounded-xl hover:border-primary/50 transition-colors">
+            <button className="w-full py-2.5 bg-background border border-border text-foreground text-sm font-bold rounded-xl hover:border-primary/50 transition-colors">
               Change Password
             </button>
-            <button className="w-full py-2.5 bg-danger/10 border border-danger/20 text-danger text-sm font-medium rounded-xl hover:bg-danger/20 transition-colors">
+            <button className="w-full py-2.5 bg-danger/10 border border-danger/20 text-danger text-sm font-bold rounded-xl hover:bg-danger/20 transition-colors">
               Log Out
             </button>
           </div>
