@@ -1,12 +1,65 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { competitions } from '@/lib/mock-data';
 import { formatPrice, formatPriceShort, percentSold } from '@/lib/utils';
 
+interface Competition {
+  id: string;
+  title: string;
+  slug: string;
+  category: string;
+  ticketPrice: number;
+  totalTickets: number;
+  ticketsSold: number;
+  prizeValue: number;
+  drawDate: string;
+  status: string;
+  featured: boolean;
+  minimumSoldPercentage: number;
+}
+
 export default function AdminCompetitionsPage() {
+  const [competitions, setCompetitions] = useState<Competition[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'live' | 'draft' | 'drawn'>('all');
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  const loadCompetitions = () => {
+    fetch('/api/admin/competitions')
+      .then((r) => r.json())
+      .then((data) => setCompetitions(data.competitions || []))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadCompetitions();
+  }, []);
+
+  const handleDelete = async (id: string, title: string) => {
+    if (!confirm(`Are you sure you want to delete "${title}"? This cannot be undone.`)) return;
+
+    setDeleting(id);
+    try {
+      const res = await fetch(`/api/admin/competitions/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setCompetitions((prev) => prev.filter((c) => c.id !== id));
+      }
+    } catch (err) {
+      console.error('Delete failed:', err);
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto flex items-center justify-center min-h-[60vh]">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   const filtered = filter === 'all' ? competitions : competitions.filter((c) => c.status === filter);
 
@@ -58,63 +111,82 @@ export default function AdminCompetitionsPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((comp) => {
-                const pct = percentSold(comp.ticketsSold, comp.totalTickets);
-                const thresholdMet = pct >= comp.minimumSoldPercentage;
-                return (
-                  <tr key={comp.id} className="border-b border-border/50 last:border-0 hover:bg-white/[0.02]">
-                    <td className="px-5 py-4">
-                      <p className="text-sm font-bold text-foreground truncate max-w-[250px]">{comp.title}</p>
-                      <p className="text-xs text-muted font-medium">Draw: {new Date(comp.drawDate).toLocaleDateString('en-GB')}</p>
-                    </td>
-                    <td className="px-5 py-4 hidden md:table-cell">
-                      <span className="text-xs font-bold bg-background border border-border rounded-lg px-2.5 py-1 capitalize">
-                        {comp.category}
-                      </span>
-                    </td>
-                    <td className="px-5 py-4 text-sm font-bold text-foreground">{formatPrice(comp.ticketPrice)}</td>
-                    <td className="px-5 py-4 hidden sm:table-cell">
-                      <div className="flex items-center gap-2">
-                        <div className="w-20 h-2 bg-background rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${pct >= 80 ? 'bg-danger' : pct >= 50 ? 'bg-primary' : 'bg-success'}`}
-                            style={{ width: `${pct}%` }}
-                          />
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="px-5 py-8 text-center text-sm text-muted">
+                    No competitions found
+                  </td>
+                </tr>
+              ) : (
+                filtered.map((comp) => {
+                  const pct = percentSold(comp.ticketsSold, comp.totalTickets);
+                  const thresholdMet = pct >= comp.minimumSoldPercentage;
+                  return (
+                    <tr key={comp.id} className="border-b border-border/50 last:border-0 hover:bg-white/[0.02]">
+                      <td className="px-5 py-4">
+                        <p className="text-sm font-bold text-foreground truncate max-w-[250px]">{comp.title}</p>
+                        <p className="text-xs text-muted font-medium">Draw: {new Date(comp.drawDate).toLocaleDateString('en-GB')}</p>
+                      </td>
+                      <td className="px-5 py-4 hidden md:table-cell">
+                        <span className="text-xs font-bold bg-background border border-border rounded-lg px-2.5 py-1 capitalize">
+                          {comp.category}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4 text-sm font-bold text-foreground">{formatPrice(comp.ticketPrice)}</td>
+                      <td className="px-5 py-4 hidden sm:table-cell">
+                        <div className="flex items-center gap-2">
+                          <div className="w-20 h-2 bg-background rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full ${pct >= 80 ? 'bg-danger' : pct >= 50 ? 'bg-primary' : 'bg-success'}`}
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                          <span className="text-xs text-muted font-bold">{pct}%</span>
                         </div>
-                        <span className="text-xs text-muted font-bold">{pct}%</span>
-                      </div>
-                    </td>
-                    <td className="px-5 py-4 hidden lg:table-cell">
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded-lg ${thresholdMet ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary'}`}>
-                        {comp.minimumSoldPercentage}%{thresholdMet ? ' ✓' : ''}
-                      </span>
-                    </td>
-                    <td className="px-5 py-4 text-sm text-foreground hidden lg:table-cell font-bold">
-                      {formatPriceShort(comp.prizeValue)}
-                    </td>
-                    <td className="px-5 py-4">
-                      <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
-                        comp.status === 'live' ? 'bg-success/10 text-success' :
-                        comp.status === 'coming_soon' ? 'bg-primary/10 text-primary' :
-                        comp.status === 'sold_out' ? 'bg-danger/10 text-danger' :
-                        'bg-muted/10 text-muted'
-                      }`}>
-                        {comp.status === 'live' ? 'Live' :
-                         comp.status === 'coming_soon' ? 'Soon' :
-                         comp.status === 'sold_out' ? 'Sold Out' : 'Drawn'}
-                      </span>
-                    </td>
-                    <td className="px-5 py-4 text-right">
-                      <Link
-                        href={`/admin/competitions/${comp.id}/edit`}
-                        className="text-xs text-primary hover:text-primary-light font-bold transition-colors"
-                      >
-                        Edit
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              })}
+                      </td>
+                      <td className="px-5 py-4 hidden lg:table-cell">
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded-lg ${thresholdMet ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary'}`}>
+                          {comp.minimumSoldPercentage}%{thresholdMet ? ' ✓' : ''}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4 text-sm text-foreground hidden lg:table-cell font-bold">
+                        {formatPriceShort(comp.prizeValue)}
+                      </td>
+                      <td className="px-5 py-4">
+                        <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
+                          comp.status === 'live' ? 'bg-success/10 text-success' :
+                          comp.status === 'coming_soon' ? 'bg-primary/10 text-primary' :
+                          comp.status === 'sold_out' ? 'bg-danger/10 text-danger' :
+                          comp.status === 'draft' ? 'bg-muted/10 text-muted' :
+                          'bg-muted/10 text-muted'
+                        }`}>
+                          {comp.status === 'live' ? 'Live' :
+                           comp.status === 'coming_soon' ? 'Soon' :
+                           comp.status === 'sold_out' ? 'Sold Out' :
+                           comp.status === 'draft' ? 'Draft' : 'Drawn'}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4 text-right">
+                        <div className="flex items-center justify-end gap-3">
+                          <Link
+                            href={`/admin/competitions/${comp.id}/edit`}
+                            className="text-xs text-primary hover:text-primary-light font-bold transition-colors"
+                          >
+                            Edit
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(comp.id, comp.title)}
+                            disabled={deleting === comp.id}
+                            className="text-xs text-danger hover:text-danger/80 font-bold transition-colors disabled:opacity-50"
+                          >
+                            {deleting === comp.id ? '...' : 'Delete'}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>

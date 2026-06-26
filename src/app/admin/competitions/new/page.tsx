@@ -1,18 +1,88 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function NewCompetitionPage() {
+  const router = useRouter();
+  const fileRef = useRef<HTMLInputElement>(null);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [uploading, setUploading] = useState(false);
+
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('cars');
+  const [status, setStatus] = useState('draft');
+  const [prizeValue, setPrizeValue] = useState('');
+  const [cashAlternative, setCashAlternative] = useState('');
+  const [ticketPrice, setTicketPrice] = useState('');
+  const [totalTickets, setTotalTickets] = useState('');
+  const [maxPerPerson, setMaxPerPerson] = useState('100');
+  const [drawDate, setDrawDate] = useState('');
   const [threshold, setThreshold] = useState(85);
+  const [featured, setFeatured] = useState(false);
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const form = new FormData();
+      form.append('file', file);
+      const res = await fetch('/api/upload', { method: 'POST', body: form });
+      const data = await res.json();
+      if (data.url) setImageUrl(data.url);
+      else setError(data.error || 'Upload failed');
+    } catch {
+      setError('Image upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     setSaving(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    setSaving(false);
-    alert('Competition created! (Demo - requires database connection)');
+
+    try {
+      const res = await fetch('/api/admin/competitions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title,
+          description,
+          category,
+          status,
+          imageUrl: imageUrl || null,
+          prizeValue: Math.round(parseFloat(prizeValue) * 100),
+          cashAlternative: cashAlternative ? Math.round(parseFloat(cashAlternative) * 100) : null,
+          ticketPrice: Math.round(parseFloat(ticketPrice) * 100),
+          totalTickets: parseInt(totalTickets),
+          maxPerPerson: parseInt(maxPerPerson),
+          drawDate: new Date(drawDate).toISOString(),
+          minimumSoldPercentage: threshold,
+          featured,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Failed to create competition');
+        setSaving(false);
+        return;
+      }
+
+      router.push('/admin/competitions');
+    } catch {
+      setError('Something went wrong');
+      setSaving(false);
+    }
   };
 
   return (
@@ -30,25 +100,30 @@ export default function NewCompetitionPage() {
 
         <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-8">Create Competition</h1>
 
+        {error && (
+          <div className="bg-danger/10 border border-danger/20 text-danger text-sm font-semibold rounded-xl p-3 mb-6">
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Info */}
           <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
             <h2 className="text-lg font-bold text-foreground">Basic Information</h2>
 
             <div>
               <label className="block text-sm font-semibold text-foreground mb-1.5">Competition Title</label>
-              <input type="text" required className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="e.g., Win a BMW M4 or £60,000 Cash" />
+              <input type="text" required value={title} onChange={(e) => setTitle(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="e.g., Win a BMW M4 or £60,000 Cash" />
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-foreground mb-1.5">Description</label>
-              <textarea required rows={5} className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors resize-none" placeholder="Describe the prize and competition details..." />
+              <textarea required rows={5} value={description} onChange={(e) => setDescription(e.target.value)} className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors resize-none" placeholder="Describe the prize and competition details..." />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-1.5">Category</label>
-                <select className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors cursor-pointer">
+                <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors cursor-pointer">
                   <option value="cars">Cars</option>
                   <option value="cash">Cash</option>
                   <option value="tech">Tech</option>
@@ -60,7 +135,7 @@ export default function NewCompetitionPage() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-1.5">Status</label>
-                <select className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors cursor-pointer">
+                <select value={status} onChange={(e) => setStatus(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors cursor-pointer">
                   <option value="draft">Draft</option>
                   <option value="live">Live</option>
                   <option value="coming_soon">Coming Soon</option>
@@ -69,64 +144,91 @@ export default function NewCompetitionPage() {
             </div>
           </div>
 
-          {/* Prize Details */}
           <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
             <h2 className="text-lg font-bold text-foreground">Prize Details</h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-1.5">Prize Value (£)</label>
-                <input type="number" required step="0.01" className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="75000.00" />
+                <input type="number" required step="0.01" value={prizeValue} onChange={(e) => setPrizeValue(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="75000.00" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-1.5">Cash Alternative (£, optional)</label>
-                <input type="number" step="0.01" className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="60000.00" />
+                <input type="number" step="0.01" value={cashAlternative} onChange={(e) => setCashAlternative(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="60000.00" />
               </div>
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-foreground mb-1.5">Prize Image</label>
-              <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-primary/50 transition-colors cursor-pointer">
-                <svg className="w-10 h-10 mx-auto text-muted mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <p className="text-sm text-muted font-medium">Click to upload or drag and drop</p>
-                <p className="text-xs text-muted mt-1">PNG, JPG, WebP up to 5MB</p>
-              </div>
+              <input type="file" ref={fileRef} accept="image/*" onChange={handleUpload} className="hidden" />
+              {imageUrl ? (
+                <div className="relative aspect-video rounded-xl overflow-hidden border border-border">
+                  <Image src={imageUrl} alt="Prize" fill className="object-cover" sizes="600px" />
+                  <button
+                    type="button"
+                    onClick={() => { setImageUrl(''); if (fileRef.current) fileRef.current.value = ''; }}
+                    className="absolute top-2 right-2 w-8 h-8 bg-background/80 backdrop-blur-sm rounded-lg flex items-center justify-center text-danger hover:bg-danger hover:text-background transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  disabled={uploading}
+                  className="w-full border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-primary/50 transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {uploading ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                      <span className="text-sm text-muted font-medium">Uploading...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <svg className="w-10 h-10 mx-auto text-muted mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <p className="text-sm text-muted font-medium">Click to upload image</p>
+                      <p className="text-xs text-muted mt-1">PNG, JPG, WebP up to 5MB</p>
+                    </>
+                  )}
+                </button>
+              )}
             </div>
           </div>
 
-          {/* Ticket Settings */}
           <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
             <h2 className="text-lg font-bold text-foreground">Ticket Settings</h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-1.5">Ticket Price (£)</label>
-                <input type="number" required step="0.01" className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="1.99" />
+                <input type="number" required step="0.01" value={ticketPrice} onChange={(e) => setTicketPrice(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="1.99" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-1.5">Total Tickets</label>
-                <input type="number" required className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="4999" />
+                <input type="number" required value={totalTickets} onChange={(e) => setTotalTickets(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="4999" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-1.5">Max Per Person</label>
-                <input type="number" required className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="100" />
+                <input type="number" required value={maxPerPerson} onChange={(e) => setMaxPerPerson(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="100" />
               </div>
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-foreground mb-1.5">Draw Date & Time</label>
-              <input type="datetime-local" required className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors" />
+              <input type="datetime-local" required value={drawDate} onChange={(e) => setDrawDate(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors" />
             </div>
 
-            {/* Minimum Sold Threshold */}
             <div>
               <label className="block text-sm font-semibold text-foreground mb-1.5">
                 Minimum Sold Threshold: <span className="text-primary">{threshold}%</span>
               </label>
               <p className="text-xs text-muted mb-3 font-medium">
-                The competition won&apos;t go ahead unless this percentage of tickets are sold. All ticket holders will be refunded if the threshold is not met.
+                The competition won&apos;t go ahead unless this percentage of tickets are sold.
               </p>
               <input
                 type="range"
@@ -144,14 +246,13 @@ export default function NewCompetitionPage() {
             </div>
 
             <div className="flex items-center gap-3">
-              <input type="checkbox" id="featured" className="w-4 h-4 rounded border-border bg-background text-primary focus:ring-primary" />
+              <input type="checkbox" id="featured" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="w-4 h-4 rounded border-border bg-background text-primary focus:ring-primary" />
               <label htmlFor="featured" className="text-sm text-foreground font-medium">
                 Feature this competition on the homepage
               </label>
             </div>
           </div>
 
-          {/* Submit */}
           <div className="flex items-center justify-end gap-4">
             <Link href="/admin/competitions" className="px-5 py-2.5 text-sm font-bold text-muted hover:text-foreground transition-colors">
               Cancel
