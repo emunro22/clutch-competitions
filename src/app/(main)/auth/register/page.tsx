@@ -26,6 +26,8 @@ export default function RegisterPage() {
     if (result.error) {
       setError(result.error);
       setLoading(false);
+    } else if (result.requiresVerification) {
+      router.push(`/auth/verify-email?email=${encodeURIComponent(result.email || email)}`);
     } else {
       router.push('/account');
     }

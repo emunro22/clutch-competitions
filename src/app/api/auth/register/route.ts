@@ -1,10 +1,11 @@
 import { db } from '@/lib/db';
-import { users } from '@/lib/db/schema';
-import { signToken, setAuthCookie } from '@/lib/auth';
-import { sendSignupNotification } from '@/lib/email';
+import { users, verificationCodes } from '@/lib/db/schema';
+import { sendSignupNotification, sendVerificationCode } from '@/lib/email';
+import { rateLimit } from '@/lib/rate-limit';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { v4 as uuid } from 'uuid';
+import crypto from 'crypto';
 
 export async function POST(request: Request) {
   try {
@@ -15,6 +16,16 @@ export async function POST(request: Request) {
       return Response.json(
         { error: 'All required fields must be filled in' },
         { status: 400 }
+      );
+    }
+
+    const normalizedEmail = email.toLowerCase();
+
+    const { allowed, retryAfterSeconds } = rateLimit(`register:${normalizedEmail}`, 3, 5 * 60 * 1000);
+    if (!allowed) {
+      return Response.json(
+        { error: `Too many attempts. Try again in ${retryAfterSeconds} seconds.` },
+        { status: 429 }
       );
     }
 
@@ -37,7 +48,7 @@ export async function POST(request: Request) {
     const existing = await db
       .select({ id: users.id })
       .from(users)
-      .where(eq(users.email, email.toLowerCase()))
+      .where(eq(users.email, normalizedEmail))
       .limit(1);
 
     if (existing.length > 0) {
@@ -53,36 +64,41 @@ export async function POST(request: Request) {
 
     await db.insert(users).values({
       id,
-      email: email.toLowerCase(),
+      email: normalizedEmail,
       passwordHash,
       name,
       phone: phone || null,
       dateOfBirth: dateOfBirth,
+      emailVerified: false,
       role: 'user',
     });
 
     // Send signup notification emails (non-blocking)
     sendSignupNotification({
       customerName: name,
-      customerEmail: email.toLowerCase(),
+      customerEmail: normalizedEmail,
       phone: phone || undefined,
       dateOfBirth,
     }).catch((err) => console.error('Signup notification email failed:', err));
 
-    const token = signToken({ userId: id, email: email.toLowerCase(), role: 'user' });
-    const cookie = setAuthCookie(token);
+    // Generate and send verification code
+    const code = crypto.randomInt(100000, 999999).toString();
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-    const response = Response.json(
-      { user: { id, email: email.toLowerCase(), name, role: 'user' } },
+    await db.insert(verificationCodes).values({
+      id: uuid(),
+      userId: id,
+      code,
+      type: 'email_verification',
+      expiresAt,
+    });
+
+    await sendVerificationCode({ email: normalizedEmail, name, code });
+
+    return Response.json(
+      { requiresVerification: true, email: normalizedEmail },
       { status: 201 }
     );
-
-    response.headers.set(
-      'Set-Cookie',
-      `${cookie.name}=${cookie.value}; Path=${cookie.options.path}; Max-Age=${cookie.options.maxAge}; HttpOnly; SameSite=${cookie.options.sameSite}${cookie.options.secure ? '; Secure' : ''}`
-    );
-
-    return response;
   } catch (error) {
     console.error('Registration error:', error);
     return Response.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });

@@ -3,14 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '@/lib/auth-context';
 
-export default function LoginPage() {
+export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { login } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -18,16 +15,24 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
 
-    const result = await login(email, password);
-    if (result.error) {
-      if (result.requiresVerification) {
-        router.push(`/auth/verify-email?email=${encodeURIComponent(result.email || email)}`);
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error);
+        setLoading(false);
         return;
       }
-      setError(result.error);
+
+      router.push(`/auth/reset-password?email=${encodeURIComponent(email.toLowerCase())}`);
+    } catch {
+      setError('Something went wrong. Please try again.');
       setLoading(false);
-    } else {
-      router.push('/account');
     }
   };
 
@@ -40,8 +45,8 @@ export default function LoginPage() {
               CC
             </div>
           </Link>
-          <h1 className="text-2xl font-black text-foreground mb-2">Welcome Back</h1>
-          <p className="text-muted font-medium">Log in to your Clutch Competitions account</p>
+          <h1 className="text-2xl font-black text-foreground mb-2">Forgot Password?</h1>
+          <p className="text-muted font-medium">Enter your email and we&apos;ll send you a reset code</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-6 sm:p-8 space-y-5">
@@ -52,9 +57,7 @@ export default function LoginPage() {
           )}
 
           <div>
-            <label className="block text-sm font-semibold text-foreground mb-1.5">
-              Email Address
-            </label>
+            <label className="block text-sm font-semibold text-foreground mb-1.5">Email Address</label>
             <input
               type="email"
               value={email}
@@ -65,36 +68,19 @@ export default function LoginPage() {
             />
           </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-sm font-semibold text-foreground">Password</label>
-              <Link href="/auth/forgot-password" className="text-xs text-primary hover:text-primary-light font-bold transition-colors">
-                Forgot password?
-              </Link>
-            </div>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
-              placeholder="••••••••"
-            />
-          </div>
-
           <button
             type="submit"
             disabled={loading}
             className="w-full py-3.5 bg-primary hover:bg-primary-light text-background font-bold rounded-xl transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
-            {loading ? 'Logging in...' : 'Log In'}
+            {loading ? 'Sending code...' : 'Send Reset Code'}
           </button>
         </form>
 
         <p className="text-center text-sm text-muted mt-6 font-medium">
-          Don&apos;t have an account?{' '}
-          <Link href="/auth/register" className="text-primary hover:text-primary-light font-bold transition-colors">
-            Sign up free
+          Remember your password?{' '}
+          <Link href="/auth/login" className="text-primary hover:text-primary-light font-bold transition-colors">
+            Log in
           </Link>
         </p>
       </div>

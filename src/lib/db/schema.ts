@@ -17,6 +17,11 @@ export const orderStatusEnum = pgEnum('order_status', [
 
 export const userRoleEnum = pgEnum('user_role', ['user', 'admin']);
 
+export const verificationCodeTypeEnum = pgEnum('verification_code_type', [
+  'email_verification',
+  'password_reset',
+]);
+
 export const users = pgTable('users', {
   id: text('id').primaryKey(),
   email: varchar('email', { length: 255 }).notNull().unique(),
@@ -24,9 +29,20 @@ export const users = pgTable('users', {
   name: varchar('name', { length: 255 }).notNull(),
   phone: varchar('phone', { length: 20 }),
   dateOfBirth: varchar('date_of_birth', { length: 10 }),
+  emailVerified: boolean('email_verified').default(false).notNull(),
   role: userRoleEnum('role').default('user').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const verificationCodes = pgTable('verification_codes', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  code: varchar('code', { length: 6 }).notNull(),
+  type: verificationCodeTypeEnum('type').notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  usedAt: timestamp('used_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const competitions = pgTable('competitions', {

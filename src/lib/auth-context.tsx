@@ -12,8 +12,8 @@ export interface SessionUser {
 interface AuthContextType {
   user: SessionUser | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<{ error?: string }>;
-  register: (data: { email: string; password: string; firstName: string; lastName: string; phone?: string; dateOfBirth: string }) => Promise<{ error?: string }>;
+  login: (email: string, password: string) => Promise<{ error?: string; requiresVerification?: boolean; email?: string }>;
+  register: (data: { email: string; password: string; firstName: string; lastName: string; phone?: string; dateOfBirth: string }) => Promise<{ error?: string; requiresVerification?: boolean; email?: string }>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -47,7 +47,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       body: JSON.stringify({ email, password }),
     });
     const data = await res.json();
-    if (!res.ok) return { error: data.error };
+    if (!res.ok) {
+      if (data.requiresVerification) {
+        return { error: data.error, requiresVerification: true, email: data.email };
+      }
+      return { error: data.error };
+    }
     setUser(data.user);
     return {};
   }, []);
@@ -60,6 +65,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     const data = await res.json();
     if (!res.ok) return { error: data.error };
+    if (data.requiresVerification) {
+      return { requiresVerification: true, email: data.email };
+    }
     setUser(data.user);
     return {};
   }, []);

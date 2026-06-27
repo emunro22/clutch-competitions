@@ -114,6 +114,74 @@ export async function sendOrderNotification({
   });
 }
 
+// ── Verification code email ──
+
+export async function sendVerificationCode({
+  email,
+  name,
+  code,
+}: {
+  email: string;
+  name: string;
+  code: string;
+}) {
+  const resend = getResend();
+
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: email,
+    subject: `${code} — Verify your email`,
+    html: emailWrapper(`
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="display: inline-block; background-color: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">🔐</div>
+        <h1 style="color: #F1F5F9; font-size: 22px; font-weight: 800; margin: 16px 0 4px 0;">Verify Your Email</h1>
+        <p style="color: #94A3B8; font-size: 14px; margin: 0;">Hi ${name.split(' ')[0]}, use the code below to verify your email address</p>
+      </div>
+      <div style="text-align: center; margin: 32px 0;">
+        <div style="display: inline-block; background-color: #0A0E1A; border: 2px solid #F59E0B; border-radius: 16px; padding: 20px 40px; letter-spacing: 8px; font-size: 32px; font-weight: 900; color: #F59E0B; font-family: monospace;">${code}</div>
+      </div>
+      <div style="text-align: center;">
+        <p style="color: #94A3B8; font-size: 13px; margin: 0;">This code expires in <strong style="color: #F1F5F9;">5 minutes</strong>.</p>
+        <p style="color: #94A3B8; font-size: 13px; margin: 8px 0 0 0;">If you didn't create an account, you can safely ignore this email.</p>
+      </div>
+    `),
+  });
+}
+
+// ── Password reset code email ──
+
+export async function sendPasswordResetCode({
+  email,
+  name,
+  code,
+}: {
+  email: string;
+  name: string;
+  code: string;
+}) {
+  const resend = getResend();
+
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: email,
+    subject: `${code} — Reset your password`,
+    html: emailWrapper(`
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="display: inline-block; background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">🔑</div>
+        <h1 style="color: #F1F5F9; font-size: 22px; font-weight: 800; margin: 16px 0 4px 0;">Reset Your Password</h1>
+        <p style="color: #94A3B8; font-size: 14px; margin: 0;">Hi ${name.split(' ')[0]}, use the code below to reset your password</p>
+      </div>
+      <div style="text-align: center; margin: 32px 0;">
+        <div style="display: inline-block; background-color: #0A0E1A; border: 2px solid #F59E0B; border-radius: 16px; padding: 20px 40px; letter-spacing: 8px; font-size: 32px; font-weight: 900; color: #F59E0B; font-family: monospace;">${code}</div>
+      </div>
+      <div style="text-align: center;">
+        <p style="color: #94A3B8; font-size: 13px; margin: 0;">This code expires in <strong style="color: #F1F5F9;">5 minutes</strong>.</p>
+        <p style="color: #94A3B8; font-size: 13px; margin: 8px 0 0 0;">If you didn't request a password reset, you can safely ignore this email.</p>
+      </div>
+    `),
+  });
+}
+
 // ── Signup notification ──
 
 export async function sendSignupNotification({

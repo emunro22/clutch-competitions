@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
 import { signToken, setAuthCookie } from '@/lib/auth';
+import { rateLimit } from '@/lib/rate-limit';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 
@@ -16,10 +17,20 @@ export async function POST(request: Request) {
       );
     }
 
+    const normalizedEmail = email.toLowerCase();
+
+    const { allowed, retryAfterSeconds } = rateLimit(`login:${normalizedEmail}`, 5, 15 * 60 * 1000);
+    if (!allowed) {
+      return Response.json(
+        { error: `Too many login attempts. Try again in ${retryAfterSeconds} seconds.` },
+        { status: 429 }
+      );
+    }
+
     const [user] = await db
       .select()
       .from(users)
-      .where(eq(users.email, email.toLowerCase()))
+      .where(eq(users.email, normalizedEmail))
       .limit(1);
 
     if (!user) {
@@ -34,6 +45,13 @@ export async function POST(request: Request) {
       return Response.json(
         { error: 'Invalid email or password' },
         { status: 401 }
+      );
+    }
+
+    if (!user.emailVerified) {
+      return Response.json(
+        { error: 'Please verify your email before logging in', requiresVerification: true, email: normalizedEmail },
+        { status: 403 }
       );
     }
 
