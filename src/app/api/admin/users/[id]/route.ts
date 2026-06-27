@@ -1,6 +1,6 @@
 import { getSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { users, orders, tickets, verificationCodes } from '@/lib/db/schema';
+import { users, orders, tickets, winners, verificationCodes } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
 export async function DELETE(
@@ -33,6 +33,7 @@ export async function DELETE(
       return Response.json({ error: 'Cannot delete an admin account' }, { status: 400 });
     }
 
+    await db.delete(winners).where(eq(winners.userId, id));
     await db.delete(verificationCodes).where(eq(verificationCodes.userId, id));
     await db.delete(tickets).where(eq(tickets.userId, id));
     await db.delete(orders).where(eq(orders.userId, id));
