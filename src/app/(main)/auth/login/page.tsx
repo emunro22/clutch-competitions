@@ -37,7 +37,7 @@ export default function LoginPage() {
       <div className="animate-fade-in-up w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <Image src="/logo.png" alt="Clutch Competitions" width={64} height={64} className="w-16 h-16 object-contain" />
+            <Image src="/logo.png" alt="Clutch Competitions" width={88} height={88} className="w-22 h-22 object-contain" />
           </Link>
           <h1 className="text-2xl font-black text-foreground mb-2">Welcome Back</h1>
           <p className="text-muted font-medium">Log in to your Clutch Competitions account</p>

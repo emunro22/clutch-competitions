@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import HeroSlideshow from './HeroSlideshow';
 
 export default function HeroSection() {
@@ -11,6 +12,14 @@ export default function HeroSection() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 lg:pt-20 lg:pb-28">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div className="text-center lg:text-left">
+            <Image
+              src="/logo.png"
+              alt="Clutch Competitions"
+              width={112}
+              height={112}
+              className="animate-fade-in-up w-24 h-24 sm:w-28 sm:h-28 object-contain mx-auto lg:mx-0 mb-6"
+            />
+
             <div className="animate-fade-in-up inline-flex items-center gap-2 bg-card border border-primary/20 rounded-full px-4 py-1.5 mb-8">
               <div className="w-2 h-2 rounded-full bg-success pulse-live" />
               <span className="text-sm text-muted font-medium">
