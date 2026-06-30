@@ -74,7 +74,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 mb-4">
-              <Image src="/logo.png" alt="Clutch Competitions" width={40} height={40} className="w-10 h-10 object-contain" />
+              <Image src="/logo.png" alt="Clutch Competitions" width={56} height={56} className="w-14 h-14 object-contain shrink-0" />
               <span className="text-xl font-extrabold text-foreground">
                 Clutch<span className="text-primary">Comps</span>
               </span>

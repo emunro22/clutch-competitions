@@ -50,7 +50,7 @@ export default function AdminSidebar() {
     <aside className="w-64 bg-surface border-r border-border min-h-screen p-4 hidden lg:block">
       <div className="mb-8 px-3">
         <Link href="/" className="flex items-center gap-2 mb-1">
-          <Image src="/logo.png" alt="Clutch Competitions" width={32} height={32} className="w-8 h-8 object-contain" />
+          <Image src="/logo.png" alt="Clutch Competitions" width={44} height={44} className="w-11 h-11 object-contain shrink-0" />
           <span className="text-lg font-extrabold text-foreground">
             Clutch<span className="text-primary">Comps</span>
           </span>

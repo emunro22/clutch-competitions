@@ -130,7 +130,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <Image src="/logo.png" alt="Clutch Competitions" width={40} height={40} className="w-10 h-10 object-contain" />
+            <Image src="/logo.png" alt="Clutch Competitions" width={56} height={56} className="w-14 h-14 object-contain shrink-0" />
             <div className="flex flex-col">
               <span className="text-xl font-extrabold tracking-tight text-foreground">
                 Clutch<span className="text-primary">Comps</span>

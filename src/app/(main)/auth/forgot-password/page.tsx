@@ -42,7 +42,7 @@ export default function ForgotPasswordPage() {
       <div className="animate-fade-in-up w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <Image src="/logo.png" alt="Clutch Competitions" width={48} height={48} className="w-12 h-12 object-contain" />
+            <Image src="/logo.png" alt="Clutch Competitions" width={64} height={64} className="w-16 h-16 object-contain" />
           </Link>
           <h1 className="text-2xl font-black text-foreground mb-2">Forgot Password?</h1>
           <p className="text-muted font-medium">Enter your email and we&apos;ll send you a reset code</p>

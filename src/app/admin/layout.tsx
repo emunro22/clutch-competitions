@@ -18,7 +18,7 @@ export default function AdminLayout({
         <div className="flex-1 lg:ml-0">
           <header className="lg:hidden bg-surface border-b border-border px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Image src="/logo.png" alt="Clutch Competitions" width={32} height={32} className="w-8 h-8 object-contain" />
+              <Image src="/logo.png" alt="Clutch Competitions" width={44} height={44} className="w-11 h-11 object-contain shrink-0" />
               <span className="text-lg font-extrabold text-foreground">Admin</span>
             </div>
           </header>
