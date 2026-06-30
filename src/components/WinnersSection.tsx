@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { formatPriceShort } from '@/lib/utils';
 import { winners } from '@/lib/mock-data';
@@ -6,17 +5,8 @@ import FadeIn from './FadeIn';
 
 export default function WinnersSection() {
   return (
-    <section className="relative overflow-hidden py-20 lg:py-28 bg-surface">
-      <Image
-        src="/logo.png"
-        alt=""
-        width={400}
-        height={400}
-        aria-hidden="true"
-        className="pointer-events-none select-none absolute -top-10 right-0 lg:right-12 w-64 h-64 lg:w-80 lg:h-80 object-contain opacity-10"
-      />
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 lg:py-28 bg-surface">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-14">
           <h2 className="text-3xl sm:text-4xl font-black text-foreground mb-4">
             Recent Winners
