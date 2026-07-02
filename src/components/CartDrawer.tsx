@@ -203,7 +203,7 @@ export default function CartDrawer() {
               ) : !user ? (
                 'Log in to Checkout'
               ) : (
-                `Checkout — ${formatPrice(cartTotal)}`
+                `Checkout, ${formatPrice(cartTotal)}`
               )}
             </button>
             <p className="text-xs text-muted text-center font-medium">

@@ -25,7 +25,6 @@ export async function PUT(
     }
     if (body.description !== undefined) updates.description = body.description;
     if (body.imageUrl !== undefined) updates.imageUrl = body.imageUrl;
-    if (body.prizeValue !== undefined) updates.prizeValue = body.prizeValue;
     if (body.cashAlternative !== undefined) updates.cashAlternative = body.cashAlternative;
     if (body.ticketPrice !== undefined) updates.ticketPrice = body.ticketPrice;
     if (body.totalTickets !== undefined) updates.totalTickets = body.totalTickets;

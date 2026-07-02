@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { formatPrice, formatPriceShort, percentSold } from '@/lib/utils';
+import { formatPrice, percentSold } from '@/lib/utils';
 
 interface Competition {
   id: string;
@@ -12,7 +12,6 @@ interface Competition {
   ticketPrice: number;
   totalTickets: number;
   ticketsSold: number;
-  prizeValue: number;
   drawDate: string;
   status: string;
   featured: boolean;
@@ -117,7 +116,6 @@ export default function AdminCompetitionsPage() {
                 <th className="text-left text-xs font-bold text-muted uppercase tracking-wider px-5 py-3">Price</th>
                 <th className="text-left text-xs font-bold text-muted uppercase tracking-wider px-5 py-3 hidden sm:table-cell">Sold</th>
                 <th className="text-left text-xs font-bold text-muted uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Threshold</th>
-                <th className="text-left text-xs font-bold text-muted uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Prize</th>
                 <th className="text-left text-xs font-bold text-muted uppercase tracking-wider px-5 py-3">Status</th>
                 <th className="text-right text-xs font-bold text-muted uppercase tracking-wider px-5 py-3">Actions</th>
               </tr>
@@ -125,7 +123,7 @@ export default function AdminCompetitionsPage() {
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-5 py-8 text-center text-sm text-muted">
+                  <td colSpan={7} className="px-5 py-8 text-center text-sm text-muted">
                     No competitions found
                   </td>
                 </tr>
@@ -160,9 +158,6 @@ export default function AdminCompetitionsPage() {
                         <span className={`text-xs font-bold px-2 py-0.5 rounded-lg ${thresholdMet ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary'}`}>
                           {comp.minimumSoldPercentage}%{thresholdMet ? ' ✓' : ''}
                         </span>
-                      </td>
-                      <td className="px-5 py-4 text-sm text-foreground hidden lg:table-cell font-bold">
-                        {formatPriceShort(comp.prizeValue)}
                       </td>
                       <td className="px-5 py-4">
                         <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${

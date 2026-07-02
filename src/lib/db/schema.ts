@@ -59,7 +59,7 @@ export const competitions = pgTable('competitions', {
   slug: varchar('slug', { length: 500 }).notNull().unique(),
   description: text('description').notNull(),
   imageUrl: text('image_url'),
-  prizeValue: integer('prize_value').notNull(),
+  prizeValue: integer('prize_value'),
   cashAlternative: integer('cash_alternative'),
   ticketPrice: integer('ticket_price').notNull(),
   totalTickets: integer('total_tickets').notNull(),

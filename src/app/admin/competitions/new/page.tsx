@@ -25,7 +25,6 @@ export default function NewCompetitionPage() {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [status, setStatus] = useState('draft');
-  const [prizeValue, setPrizeValue] = useState('');
   const [cashAlternative, setCashAlternative] = useState('');
   const [ticketPrice, setTicketPrice] = useState('');
   const [totalTickets, setTotalTickets] = useState('');
@@ -79,7 +78,6 @@ export default function NewCompetitionPage() {
           category,
           status,
           imageUrl: imageUrl || null,
-          prizeValue: Math.round(parseFloat(prizeValue) * 100),
           cashAlternative: cashAlternative ? Math.round(parseFloat(cashAlternative) * 100) : null,
           ticketPrice: Math.round(parseFloat(ticketPrice) * 100),
           totalTickets: parseInt(totalTickets),
@@ -179,15 +177,9 @@ export default function NewCompetitionPage() {
           <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
             <h2 className="text-lg font-bold text-foreground">Prize Details</h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-1.5">Prize Value (£)</label>
-                <input type="number" required step="0.01" value={prizeValue} onChange={(e) => setPrizeValue(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="75000.00" />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-1.5">Cash Alternative (£, optional)</label>
-                <input type="number" step="0.01" value={cashAlternative} onChange={(e) => setCashAlternative(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="60000.00" />
-              </div>
+            <div>
+              <label className="block text-sm font-semibold text-foreground mb-1.5">Cash Alternative (£, optional)</label>
+              <input type="number" step="0.01" value={cashAlternative} onChange={(e) => setCashAlternative(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="60000.00" />
             </div>
 
             <div>

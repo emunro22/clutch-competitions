@@ -80,7 +80,7 @@ export async function POST(request: Request) {
         price_data: {
           currency: 'gbp',
           product_data: {
-            name: `${comp.title} — ${item.quantity} ticket${item.quantity > 1 ? 's' : ''}`,
+            name: `${comp.title}, ${item.quantity} ticket${item.quantity > 1 ? 's' : ''}`,
             description: `Competition entry tickets`,
           },
           unit_amount: comp.ticketPrice,

@@ -10,7 +10,7 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Clutch Competitions — Win Premium Prizes',
+    default: 'Clutch Competitions, Win Premium Prizes',
     template: '%s | Clutch Competitions',
   },
   description:
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     'Clutch Competitions',
   ],
   openGraph: {
-    title: 'Clutch Competitions — Win Premium Prizes',
+    title: 'Clutch Competitions, Win Premium Prizes',
     description: 'Win incredible prizes from dream cars to life-changing cash. Tickets from just £0.49.',
     siteName: 'Clutch Competitions',
     locale: 'en_GB',

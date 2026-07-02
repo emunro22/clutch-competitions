@@ -3,7 +3,7 @@ import FadeIn from '@/components/FadeIn';
 
 const steps = [
   { number: '01', title: 'Create Your Account', description: 'Sign up for free in under 30 seconds. All you need is your name, email, and to confirm you\'re 18+. No credit card required to create an account.', icon: '👤' },
-  { number: '02', title: 'Browse Competitions', description: 'Explore our range of incredible prizes — from dream cars and luxury holidays to cash prizes and the latest tech. Filter by category, price, or ending soonest.', icon: '🔍' },
+  { number: '02', title: 'Browse Competitions', description: 'Explore our range of incredible prizes, from dream cars and luxury holidays to cash prizes and the latest tech. Filter by category, price, or ending soonest.', icon: '🔍' },
   { number: '03', title: 'Choose Your Tickets', description: 'Select how many tickets you want. Each ticket gives you one entry into the draw. The more tickets you have, the better your chances! All competitions have a maximum ticket limit per person to keep things fair.', icon: '🎫' },
   { number: '04', title: 'Secure Checkout', description: 'Pay securely using our Stripe-powered checkout. We accept all major debit and credit cards. Your payment details are encrypted and never stored on our servers.', icon: '🔒' },
   { number: '05', title: 'Winner is Drawn', description: 'Once the ticket threshold is met, a winner is selected using a cryptographically secure random number generator. The winning ticket number is published for full transparency.', icon: '🎲' },
@@ -71,7 +71,7 @@ export default function HowItWorksPage() {
         <h2 className="text-xl font-black text-foreground mb-3">Draw Guarantee</h2>
         <p className="text-sm text-muted max-w-lg mx-auto font-medium leading-relaxed">
           Every competition has a minimum ticket threshold (typically 85%). If the threshold isn&apos;t met by the draw date,
-          the competition is automatically extended until the threshold is reached — so every competition will always have a winner.
+          the competition is automatically extended until the threshold is reached, so every competition will always have a winner.
           The threshold and countdown are clearly displayed on each competition page so you always know where things stand.
         </p>
       </FadeIn>

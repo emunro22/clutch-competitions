@@ -28,7 +28,7 @@ export default function HeroSection() {
 
             <p className="animate-fade-in-up text-lg sm:text-xl text-muted max-w-2xl mx-auto lg:mx-0 mb-10 font-medium" style={{ animationDelay: '200ms' }}>
               From dream cars to life-changing cash prizes, luxury holidays to the latest tech.
-              Enter now — your next win could be one ticket away.
+              Enter now, your next win could be one ticket away.
             </p>
 
             <div className="animate-fade-in-up flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4" style={{ animationDelay: '300ms' }}>

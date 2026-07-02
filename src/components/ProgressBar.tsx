@@ -52,12 +52,12 @@ export default function ProgressBar({ sold, total, showLabel = true, threshold }
       </div>
       {isHot && (
         <p className="text-[10px] text-danger font-bold mt-1 pulse-live">
-          Selling fast — only {total - sold} tickets remaining!
+          Selling fast, only {total - sold} tickets remaining!
         </p>
       )}
       {threshold && !thresholdMet && (
         <p className="text-[10px] text-primary font-semibold mt-1">
-          {threshold}% must sell — auto-extends if not met
+          {threshold}% must sell, auto-extends if not met
         </p>
       )}
     </div>

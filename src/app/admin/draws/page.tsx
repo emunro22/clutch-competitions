@@ -132,7 +132,7 @@ export default function AdminDrawsPage() {
                   <div className="flex justify-between text-sm">
                     <span className="text-muted font-medium">Threshold</span>
                     <span className={`font-bold ${thresholdMet ? 'text-success' : 'text-primary'}`}>
-                      {comp.minimumSoldPercentage}% {thresholdMet ? '✓ Met' : '— Not met'}
+                      {comp.minimumSoldPercentage}%{thresholdMet ? ' ✓ Met' : ', Not met'}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
@@ -144,7 +144,7 @@ export default function AdminDrawsPage() {
                   {!thresholdMet && (
                     <div className="mt-2 bg-primary/10 border border-primary/20 rounded-lg p-3">
                       <p className="text-xs text-primary font-bold">
-                        Draw blocked — {comp.minimumSoldPercentage}% threshold not reached ({pct}% sold)
+                        Draw blocked, {comp.minimumSoldPercentage}% threshold not reached ({pct}% sold)
                       </p>
                     </div>
                   )}

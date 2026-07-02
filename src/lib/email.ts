@@ -72,7 +72,7 @@ export async function sendOrderNotification({
   await resend.emails.send({
     from: FROM_EMAIL,
     to: NOTIFICATION_EMAIL,
-    subject: `New Order: ${quantity} tickets — ${competitionTitle}`,
+    subject: `New Order: ${quantity} tickets, ${competitionTitle}`,
     html: emailWrapper(`
       <div style="text-align: center; margin-bottom: 24px;">
         <div style="display: inline-block; background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">🎫</div>
@@ -94,7 +94,7 @@ export async function sendOrderNotification({
   await resend.emails.send({
     from: FROM_EMAIL,
     to: customerEmail,
-    subject: `Order confirmed — ${competitionTitle}`,
+    subject: `Order confirmed, ${competitionTitle}`,
     html: emailWrapper(`
       <div style="text-align: center; margin-bottom: 24px;">
         <div style="display: inline-block; background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">✅</div>
@@ -130,7 +130,7 @@ export async function sendVerificationCode({
   await resend.emails.send({
     from: FROM_EMAIL,
     to: email,
-    subject: `${code} — Verify your email`,
+    subject: `${code}, Verify your email`,
     html: emailWrapper(`
       <div style="text-align: center; margin-bottom: 24px;">
         <div style="display: inline-block; background-color: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">🔐</div>
@@ -164,7 +164,7 @@ export async function sendPasswordResetCode({
   await resend.emails.send({
     from: FROM_EMAIL,
     to: email,
-    subject: `${code} — Reset your password`,
+    subject: `${code}, Reset your password`,
     html: emailWrapper(`
       <div style="text-align: center; margin-bottom: 24px;">
         <div style="display: inline-block; background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">🔑</div>
@@ -230,7 +230,7 @@ export async function sendSignupNotification({
       </div>
       <div style="text-align: center; margin-bottom: 24px;">
         <p style="color: #F1F5F9; font-size: 15px; line-height: 1.6; margin: 0;">
-          You're all set to enter our premium prize competitions. From dream cars to life-changing cash — your next win could be just one ticket away.
+          You're all set to enter our premium prize competitions. From dream cars to life-changing cash, your next win could be just one ticket away.
         </p>
       </div>
       <div style="text-align: center; margin-top: 28px;">

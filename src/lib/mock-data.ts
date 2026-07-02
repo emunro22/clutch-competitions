@@ -4,7 +4,7 @@ export interface Competition {
   slug: string;
   description: string;
   imageUrl: string;
-  prizeValue: number;
+  prizeValue: number | null;
   cashAlternative: number | null;
   ticketPrice: number;
   totalTickets: number;
@@ -33,7 +33,7 @@ export const competitions: Competition[] = [
     id: '1',
     title: 'BMW M4 Competition or £60,000 Cash',
     slug: 'bmw-m4-competition-or-60000-cash',
-    description: 'Win this stunning BMW M4 Competition in Isle of Man Green, packed with 503bhp and every optional extra. Or take the £60,000 cash alternative — the choice is yours! This incredible machine features carbon ceramic brakes, M Sport exhaust system, and the iconic straight-six twin-turbo engine.',
+    description: 'Win this stunning BMW M4 Competition in Isle of Man Green, packed with 503bhp and every optional extra. Or take the £60,000 cash alternative, the choice is yours! This incredible machine features carbon ceramic brakes, M Sport exhaust system, and the iconic straight-six twin-turbo engine.',
     imageUrl: 'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=800&h=600&fit=crop&q=80',
     prizeValue: 7500000,
     cashAlternative: 6000000,
@@ -51,7 +51,7 @@ export const competitions: Competition[] = [
     id: '2',
     title: '£25,000 Cash Prize',
     slug: '25000-cash-prize',
-    description: 'Win a life-changing £25,000 in cold hard cash. No strings attached, paid directly to your bank account within 48 hours of the draw. Spend it however you like — pay off bills, book the holiday of a lifetime, or invest in your future.',
+    description: 'Win a life-changing £25,000 in cold hard cash. No strings attached, paid directly to your bank account within 48 hours of the draw. Spend it however you like, pay off bills, book the holiday of a lifetime, or invest in your future.',
     imageUrl: 'https://images.unsplash.com/photo-1642961597907-fc6fbff01720?w=800&h=600&fit=crop&q=80',
     prizeValue: 2500000,
     cashAlternative: null,
@@ -105,7 +105,7 @@ export const competitions: Competition[] = [
     id: '5',
     title: 'Rolex Submariner Date',
     slug: 'rolex-submariner-date',
-    description: 'Win the iconic Rolex Submariner Date in Oystersteel with black dial. Brand new, unworn, with full box and papers. The watch that needs no introduction — a true classic that holds its value.',
+    description: 'Win the iconic Rolex Submariner Date in Oystersteel with black dial. Brand new, unworn, with full box and papers. The watch that needs no introduction, a true classic that holds its value.',
     imageUrl: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=800&h=600&fit=crop&q=80',
     prizeValue: 900000,
     cashAlternative: 700000,
@@ -195,7 +195,7 @@ export const competitions: Competition[] = [
     id: '10',
     title: '£5,000 Cash Quickie',
     slug: '5000-cash-quickie',
-    description: 'A quick-fire competition with amazing odds! Win £5,000 cash with only 999 tickets available. One of our most popular competitions — don\'t miss out!',
+    description: 'A quick-fire competition with amazing odds! Win £5,000 cash with only 999 tickets available. One of our most popular competitions, don\'t miss out!',
     imageUrl: 'https://images.unsplash.com/photo-1580971266928-ff5d40c194a7?w=800&h=600&fit=crop&q=80',
     prizeValue: 500000,
     cashAlternative: null,

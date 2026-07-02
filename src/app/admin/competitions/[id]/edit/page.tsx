@@ -19,7 +19,6 @@ interface Competition {
   slug: string;
   description: string;
   imageUrl: string | null;
-  prizeValue: number;
   cashAlternative: number | null;
   ticketPrice: number;
   totalTickets: number;
@@ -52,7 +51,6 @@ export default function EditCompetitionPage({
   const [category, setCategory] = useState('');
   const [status, setStatus] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const [prizeValue, setPrizeValue] = useState('');
   const [cashAlternative, setCashAlternative] = useState('');
   const [ticketPrice, setTicketPrice] = useState('');
   const [totalTickets, setTotalTickets] = useState('');
@@ -73,7 +71,6 @@ export default function EditCompetitionPage({
           setCategory(found.category);
           setStatus(found.status);
           setImageUrl(found.imageUrl || '');
-          setPrizeValue((found.prizeValue / 100).toFixed(2));
           setCashAlternative(found.cashAlternative ? (found.cashAlternative / 100).toFixed(2) : '');
           setTicketPrice((found.ticketPrice / 100).toFixed(2));
           setTotalTickets(found.totalTickets.toString());
@@ -128,7 +125,6 @@ export default function EditCompetitionPage({
           category,
           status,
           imageUrl: imageUrl || null,
-          prizeValue: Math.round(parseFloat(prizeValue) * 100),
           cashAlternative: cashAlternative ? Math.round(parseFloat(cashAlternative) * 100) : null,
           ticketPrice: Math.round(parseFloat(ticketPrice) * 100),
           totalTickets: parseInt(totalTickets),
@@ -273,15 +269,9 @@ export default function EditCompetitionPage({
           <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
             <h2 className="text-lg font-bold text-foreground">Prize & Image</h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-1.5">Prize Value (£)</label>
-                <input type="number" required step="0.01" value={prizeValue} onChange={(e) => setPrizeValue(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors" />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-1.5">Cash Alternative (£)</label>
-                <input type="number" step="0.01" value={cashAlternative} onChange={(e) => setCashAlternative(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="Optional" />
-              </div>
+            <div>
+              <label className="block text-sm font-semibold text-foreground mb-1.5">Cash Alternative (£)</label>
+              <input type="number" step="0.01" value={cashAlternative} onChange={(e) => setCashAlternative(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="Optional" />
             </div>
 
             <div>

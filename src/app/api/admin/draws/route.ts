@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     const pct = Math.round((comp.ticketsSold / comp.totalTickets) * 100);
     if (pct < comp.minimumSoldPercentage) {
       return Response.json(
-        { error: `Threshold not met — ${pct}% sold, needs ${comp.minimumSoldPercentage}%` },
+        { error: `Threshold not met, ${pct}% sold, needs ${comp.minimumSoldPercentage}%` },
         { status: 400 }
       );
     }

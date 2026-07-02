@@ -70,10 +70,6 @@ export default function CompetitionDetailPage({
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            <div className="bg-card border border-border rounded-xl p-4">
-              <p className="text-xs text-muted uppercase tracking-wider mb-1 font-semibold">Prize Value</p>
-              <p className="text-2xl font-black text-primary">{formatPriceShort(competition.prizeValue)}</p>
-            </div>
             {competition.cashAlternative && (
               <div className="bg-card border border-border rounded-xl p-4">
                 <p className="text-xs text-muted uppercase tracking-wider mb-1 font-semibold">Cash Alternative</p>

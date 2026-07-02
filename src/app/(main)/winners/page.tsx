@@ -1,5 +1,4 @@
 import { winners } from '@/lib/mock-data';
-import { formatPriceShort } from '@/lib/utils';
 
 export default function WinnersPage() {
   return (
@@ -41,14 +40,9 @@ export default function WinnersPage() {
             </div>
 
             <div className="p-6">
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <h3 className="font-bold text-foreground text-lg">{winner.name}</h3>
-                  <p className="text-sm text-muted font-medium">{winner.location}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-lg font-black text-primary">{formatPriceShort(winner.prizeValue)}</p>
-                </div>
+              <div className="mb-3">
+                <h3 className="font-bold text-foreground text-lg">{winner.name}</h3>
+                <p className="text-sm text-muted font-medium">{winner.location}</p>
               </div>
 
               <div className="bg-background rounded-xl p-4 mb-3">

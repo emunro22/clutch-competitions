@@ -41,7 +41,7 @@ export async function GET(request: Request) {
 
         extended++;
         console.log(
-          `Extended "${comp.title}" — ${soldPercent}% sold (needs ${comp.minimumSoldPercentage}%). New draw date: ${newDrawDate.toISOString()}`
+          `Extended "${comp.title}", ${soldPercent}% sold (needs ${comp.minimumSoldPercentage}%). New draw date: ${newDrawDate.toISOString()}`
         );
       }
     }

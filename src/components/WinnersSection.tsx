@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { formatPriceShort } from '@/lib/utils';
 import { winners } from '@/lib/mock-data';
 import FadeIn from './FadeIn';
 
@@ -35,9 +34,6 @@ export default function WinnersSection() {
               <div className="bg-background rounded-xl p-4">
                 <p className="text-sm text-muted font-semibold mb-1">Won</p>
                 <p className="text-lg font-black text-primary">{winner.prize}</p>
-                <p className="text-sm text-muted mt-1 font-medium">
-                  Worth {formatPriceShort(winner.prizeValue)}
-                </p>
               </div>
               <p className="text-xs text-muted mt-3 font-medium">
                 {new Date(winner.wonDate).toLocaleDateString('en-GB', {

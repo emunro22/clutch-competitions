@@ -35,24 +35,18 @@ export default function CompetitionCard({ competition, index = 0 }: CompetitionC
             <div className="absolute top-3 right-3 bg-background/80 backdrop-blur-sm text-foreground text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg border border-border/50">
               {competition.category}
             </div>
-            <div className="absolute bottom-0 left-0 right-0 pb-3 px-4">
-              <div className="flex items-end justify-between">
-                <div>
-                  <p className="text-[10px] text-muted uppercase tracking-wider font-semibold">Prize Worth</p>
-                  <p className="text-2xl font-black text-primary drop-shadow-lg">
-                    {formatPriceShort(competition.prizeValue)}
-                  </p>
-                </div>
-                {competition.cashAlternative && (
+            {competition.cashAlternative && (
+              <div className="absolute bottom-0 left-0 right-0 pb-3 px-4">
+                <div className="flex items-end justify-end">
                   <div className="text-right">
                     <p className="text-[10px] text-muted uppercase tracking-wider font-semibold">Cash Alt.</p>
                     <p className="text-sm font-bold text-foreground drop-shadow-lg">
                       {formatPriceShort(competition.cashAlternative)}
                     </p>
                   </div>
-                )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="p-4 space-y-3">
