@@ -12,10 +12,10 @@ interface IssuedTicket {
 // Matches newly-issued tickets against pre-designated instant win ticket
 // numbers for a competition (matchedAt). A matched prize only becomes
 // claimed (winner notified) once the competition's ticket revenue has
-// covered that prize's value - so it's never awarded at a loss. Every call
-// also rechecks any prizes matched earlier that were still waiting on
-// revenue, since a later sale (even of a non-winning ticket) can be what
-// finally covers the cost.
+// reached its activationThreshold (defaults to the prize's value, but can
+// be set higher to bank a profit margin first). Every call also rechecks
+// any prizes matched earlier that were still waiting on revenue, since a
+// later sale (even of a non-winning ticket) can be what finally covers it.
 export async function claimInstantWins(competitionId: string, issuedTickets: IssuedTicket[]) {
   if (issuedTickets.length > 0) {
     const ticketNumbers = issuedTickets.map((t) => t.ticketNumber);
@@ -63,7 +63,7 @@ export async function claimInstantWins(competitionId: string, issuedTickets: Iss
     );
 
   for (const win of pendingActivation) {
-    if (!win.userId || revenuePence < win.prizeValue) continue;
+    if (!win.userId || revenuePence < win.activationThreshold) continue;
 
     await db.update(instantWins).set({ claimedAt: new Date() }).where(eq(instantWins.id, win.id));
 

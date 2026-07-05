@@ -114,14 +114,16 @@ export const winners = pgTable('winners', {
 // Instant win prizes: a fixed ticket number is pre-designated as a winner when
 // created. Once a ticket with that number is issued, it is "matched" (matchedAt).
 // It only becomes "claimed" (claimedAt, winner notified) once the competition's
-// ticket revenue has covered the prize's value - so a prize is never awarded
-// before its cost has actually been earned back.
+// ticket revenue has reached activationThreshold - which defaults to the prize's
+// value, but can be set higher to bank a profit margin before the prize is
+// awarded. A prize is never awarded before its threshold has actually been earned.
 export const instantWins = pgTable('instant_wins', {
   id: text('id').primaryKey(),
   competitionId: text('competition_id').references(() => competitions.id, { onDelete: 'cascade' }).notNull(),
   ticketNumber: integer('ticket_number').notNull(),
   prizeName: varchar('prize_name', { length: 255 }).notNull(),
   prizeValue: integer('prize_value').notNull(),
+  activationThreshold: integer('activation_threshold').notNull(),
   ticketId: text('ticket_id').references(() => tickets.id, { onDelete: 'set null' }),
   userId: text('user_id').references(() => users.id, { onDelete: 'set null' }),
   matchedAt: timestamp('matched_at'),

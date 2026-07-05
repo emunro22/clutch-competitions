@@ -1,0 +1,1 @@
+ALTER TABLE "instant_wins" ADD COLUMN "activation_threshold" integer NOT NULL;

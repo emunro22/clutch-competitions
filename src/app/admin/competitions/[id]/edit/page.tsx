@@ -18,6 +18,7 @@ interface InstantWinPrize {
   ticketNumber: number;
   prizeName: string;
   prizeValue: number;
+  activationThreshold: number;
   claimedAt: string | null;
 }
 
@@ -75,6 +76,7 @@ export default function EditCompetitionPage({
   const [iwTicketNumber, setIwTicketNumber] = useState('');
   const [iwPrizeName, setIwPrizeName] = useState('');
   const [iwPrizeValue, setIwPrizeValue] = useState('');
+  const [iwActivationThreshold, setIwActivationThreshold] = useState('');
   const [iwSaving, setIwSaving] = useState(false);
   const [iwError, setIwError] = useState('');
 
@@ -137,6 +139,7 @@ export default function EditCompetitionPage({
           ticketNumber: parseInt(iwTicketNumber),
           prizeName: iwPrizeName,
           prizeValue: Math.round(parseFloat(iwPrizeValue) * 100),
+          activationThreshold: iwActivationThreshold ? Math.round(parseFloat(iwActivationThreshold) * 100) : undefined,
         }),
       });
       const data = await res.json();
@@ -146,6 +149,7 @@ export default function EditCompetitionPage({
       }
       setIwTicketNumber('');
       setIwPrizeName('');
+      setIwActivationThreshold('');
       setIwPrizeValue('');
       loadInstantWins();
     } catch {
@@ -485,7 +489,7 @@ export default function EditCompetitionPage({
             <div>
               <h2 className="text-lg font-bold text-foreground">Instant Wins</h2>
               <p className="text-xs text-muted font-medium mt-0.5">
-                Pre-designate specific ticket numbers as instant winners. Once that ticket is sold and this competition&apos;s ticket revenue covers the prize&apos;s value, the buyer is notified automatically, no draw required.
+                Pre-designate specific ticket numbers as instant winners. Once that ticket is sold and this competition&apos;s ticket revenue reaches the activation threshold, the buyer is notified automatically, no draw required. Leave the threshold blank to activate as soon as revenue covers the prize&apos;s value, or set it higher to bank a profit margin first.
               </p>
             </div>
 
@@ -504,7 +508,7 @@ export default function EditCompetitionPage({
                         Ticket #{String(w.ticketNumber).padStart(4, '0')} &middot; {w.prizeName}
                       </p>
                       <p className="text-xs text-muted font-medium">
-                        {formatPrice(w.prizeValue)}
+                        {formatPrice(w.prizeValue)} prize &middot; activates at {formatPrice(w.activationThreshold)} revenue
                         {w.claimedAt ? ` · Claimed ${new Date(w.claimedAt).toLocaleDateString('en-GB')}` : ' · Not yet sold'}
                       </p>
                     </div>
@@ -522,7 +526,7 @@ export default function EditCompetitionPage({
               </div>
             )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
               <div>
                 <label className="block text-xs font-semibold text-foreground mb-1.5">Ticket Number</label>
                 <input
@@ -553,6 +557,17 @@ export default function EditCompetitionPage({
                   onChange={(e) => setIwPrizeValue(e.target.value)}
                   className="w-full h-11 bg-background border border-border rounded-xl px-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
                   placeholder="10.00"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">Activates At (£)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={iwActivationThreshold}
+                  onChange={(e) => setIwActivationThreshold(e.target.value)}
+                  className="w-full h-11 bg-background border border-border rounded-xl px-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+                  placeholder={iwPrizeValue || 'Same as prize value'}
                 />
               </div>
             </div>

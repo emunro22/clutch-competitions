@@ -30,10 +30,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   try {
     const body = await request.json();
-    const { ticketNumber, prizeName, prizeValue } = body;
+    const { ticketNumber, prizeName, prizeValue, activationThreshold } = body;
 
     if (!ticketNumber || !prizeName || !prizeValue) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    const threshold = activationThreshold || prizeValue;
+    if (threshold < prizeValue) {
+      return Response.json({ error: 'Activation threshold cannot be less than the prize value' }, { status: 400 });
     }
 
     const [comp] = await db.select().from(competitions).where(eq(competitions.id, id)).limit(1);
@@ -62,6 +67,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       ticketNumber,
       prizeName,
       prizeValue,
+      activationThreshold: threshold,
     });
 
     // That ticket number may already have been sold - claim it immediately if so.

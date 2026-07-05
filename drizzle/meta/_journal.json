@@ -43,6 +43,13 @@
       "when": 1783284279092,
       "tag": "0005_instawin_and_activation",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1783287174964,
+      "tag": "0006_instant_win_activation_threshold",
+      "breakpoints": true
     }
   ]
 }
