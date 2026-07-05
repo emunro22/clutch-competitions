@@ -1,8 +1,26 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import HeroSlideshow from './HeroSlideshow';
+import { db } from '@/lib/db';
+import { competitions } from '@/lib/db/schema';
+import { eq, sql } from 'drizzle-orm';
 
-export default function HeroSection() {
+async function getLiveCompetitionCount() {
+  try {
+    const [row] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(competitions)
+      .where(eq(competitions.status, 'live'));
+    return row?.count ?? 0;
+  } catch (error) {
+    console.error('Live competition count error:', error);
+    return 0;
+  }
+}
+
+export default async function HeroSection() {
+  const liveCount = await getLiveCompetitionCount();
+
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
@@ -15,7 +33,16 @@ export default function HeroSection() {
             <div className="animate-fade-in-up inline-flex items-center gap-2 bg-card border border-primary/20 rounded-full px-4 py-1.5 mb-8">
               <div className="w-2 h-2 rounded-full bg-success pulse-live" />
               <span className="text-sm text-muted font-medium">
-                <span className="text-primary font-bold">10+ competitions</span> live now
+                {liveCount > 0 ? (
+                  <>
+                    <span className="text-primary font-bold">
+                      {liveCount} competition{liveCount === 1 ? '' : 's'}
+                    </span>{' '}
+                    live now
+                  </>
+                ) : (
+                  'New competitions launching soon'
+                )}
               </span>
             </div>
 

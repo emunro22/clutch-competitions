@@ -13,6 +13,14 @@ interface Category {
   icon: string;
 }
 
+interface InstantWinPrize {
+  id: string;
+  ticketNumber: number;
+  prizeName: string;
+  prizeValue: number;
+  claimedAt: string | null;
+}
+
 interface Competition {
   id: string;
   title: string;
@@ -59,6 +67,13 @@ export default function EditCompetitionPage({
   const [threshold, setThreshold] = useState(85);
   const [featured, setFeatured] = useState(false);
 
+  const [instantWins, setInstantWins] = useState<InstantWinPrize[]>([]);
+  const [iwTicketNumber, setIwTicketNumber] = useState('');
+  const [iwPrizeName, setIwPrizeName] = useState('');
+  const [iwPrizeValue, setIwPrizeValue] = useState('');
+  const [iwSaving, setIwSaving] = useState(false);
+  const [iwError, setIwError] = useState('');
+
   useEffect(() => {
     fetch('/api/admin/competitions')
       .then((r) => r.json())
@@ -91,6 +106,63 @@ export default function EditCompetitionPage({
       .then((data) => setCategories(data.categories || []))
       .catch(console.error);
   }, []);
+
+  const loadInstantWins = () => {
+    fetch(`/api/admin/competitions/${id}/instant-wins`)
+      .then((r) => r.json())
+      .then((data) => setInstantWins(data.instantWins || []))
+      .catch(console.error);
+  };
+
+  useEffect(() => {
+    loadInstantWins();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  const handleAddInstantWin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIwError('');
+    setIwSaving(true);
+    try {
+      const res = await fetch(`/api/admin/competitions/${id}/instant-wins`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ticketNumber: parseInt(iwTicketNumber),
+          prizeName: iwPrizeName,
+          prizeValue: Math.round(parseFloat(iwPrizeValue) * 100),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setIwError(data.error || 'Failed to add instant win prize');
+        return;
+      }
+      setIwTicketNumber('');
+      setIwPrizeName('');
+      setIwPrizeValue('');
+      loadInstantWins();
+    } catch {
+      setIwError('Failed to add instant win prize');
+    } finally {
+      setIwSaving(false);
+    }
+  };
+
+  const handleDeleteInstantWin = async (winId: string) => {
+    if (!confirm('Remove this instant win prize?')) return;
+    try {
+      const res = await fetch(`/api/admin/competitions/${id}/instant-wins/${winId}`, { method: 'DELETE' });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setInstantWins((prev) => prev.filter((w) => w.id !== winId));
+      } else {
+        setIwError(data.error || 'Failed to delete instant win prize');
+      }
+    } catch {
+      setIwError('Failed to delete instant win prize');
+    }
+  };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -368,6 +440,91 @@ export default function EditCompetitionPage({
                 Feature this competition on the homepage
               </label>
             </div>
+          </div>
+
+          <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
+            <div>
+              <h2 className="text-lg font-bold text-foreground">Instant Wins</h2>
+              <p className="text-xs text-muted font-medium mt-0.5">
+                Pre-designate specific ticket numbers as instant winners. The moment that ticket is sold, the buyer wins automatically, no draw required.
+              </p>
+            </div>
+
+            {iwError && (
+              <div className="bg-danger/10 border border-danger/20 text-danger text-sm font-semibold rounded-xl p-3">
+                {iwError}
+              </div>
+            )}
+
+            {instantWins.length > 0 && (
+              <div className="space-y-2">
+                {instantWins.map((w) => (
+                  <div key={w.id} className="flex items-center justify-between bg-background border border-border rounded-xl px-4 py-3">
+                    <div>
+                      <p className="text-sm font-bold text-foreground">
+                        Ticket #{String(w.ticketNumber).padStart(4, '0')} &middot; {w.prizeName}
+                      </p>
+                      <p className="text-xs text-muted font-medium">
+                        {formatPrice(w.prizeValue)}
+                        {w.claimedAt ? ` · Claimed ${new Date(w.claimedAt).toLocaleDateString('en-GB')}` : ' · Not yet sold'}
+                      </p>
+                    </div>
+                    {!w.claimedAt && (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteInstantWin(w.id)}
+                        className="text-xs text-danger hover:text-danger/80 font-bold transition-colors"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+              <div>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">Ticket Number</label>
+                <input
+                  type="number"
+                  min={1}
+                  value={iwTicketNumber}
+                  onChange={(e) => setIwTicketNumber(e.target.value)}
+                  className="w-full h-11 bg-background border border-border rounded-xl px-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+                  placeholder="e.g. 500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">Prize Name</label>
+                <input
+                  type="text"
+                  value={iwPrizeName}
+                  onChange={(e) => setIwPrizeName(e.target.value)}
+                  className="w-full h-11 bg-background border border-border rounded-xl px-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+                  placeholder="e.g. £10 Voucher"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">Prize Value (£)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={iwPrizeValue}
+                  onChange={(e) => setIwPrizeValue(e.target.value)}
+                  className="w-full h-11 bg-background border border-border rounded-xl px-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+                  placeholder="10.00"
+                />
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleAddInstantWin}
+              disabled={iwSaving || !iwTicketNumber || !iwPrizeName || !iwPrizeValue}
+              className="px-5 py-2.5 bg-primary hover:bg-primary-light text-background font-bold text-sm rounded-xl transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+            >
+              {iwSaving ? 'Adding...' : 'Add Instant Win Prize'}
+            </button>
           </div>
 
           <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-4">

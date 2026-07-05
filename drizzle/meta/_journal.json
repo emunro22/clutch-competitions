@@ -29,6 +29,13 @@
       "when": 1783080000000,
       "tag": "0003_prize_value_nullable",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1783282266003,
+      "tag": "0004_instant_wins",
+      "breakpoints": true
     }
   ]
 }

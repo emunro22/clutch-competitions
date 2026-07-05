@@ -32,6 +32,13 @@ export default function CompetitionCard({ competition, index = 0 }: CompetitionC
                 Featured
               </div>
             )}
+            {!!competition.instantWinsCount && (
+              <div
+                className={`absolute left-3 bg-accent text-background text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg flex items-center gap-1 ${competition.featured ? 'top-10' : 'top-3'}`}
+              >
+                ⚡ Instant Wins
+              </div>
+            )}
             <div className="absolute top-3 right-3 bg-background/80 backdrop-blur-sm text-foreground text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg border border-border/50">
               {competition.category}
             </div>

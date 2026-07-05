@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
-import { competitions } from '@/lib/db/schema';
-import { eq, and, sql } from 'drizzle-orm';
+import { competitions, instantWins } from '@/lib/db/schema';
+import { eq, and, sql, isNull } from 'drizzle-orm';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -27,6 +27,17 @@ export async function GET(request: Request) {
       .where(conditions.length > 0 ? and(...conditions) : undefined)
       .orderBy(sql`${competitions.createdAt} desc`);
 
+    const instantWinCounts = await db
+      .select({
+        competitionId: instantWins.competitionId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(instantWins)
+      .where(isNull(instantWins.claimedAt))
+      .groupBy(instantWins.competitionId);
+
+    const countsByCompetition = new Map(instantWinCounts.map((row) => [row.competitionId, row.count]));
+
     return Response.json({
       competitions: result.map((c) => ({
         id: c.id,
@@ -45,6 +56,7 @@ export async function GET(request: Request) {
         featured: c.featured,
         maxPerPerson: c.maxPerPerson,
         minimumSoldPercentage: c.minimumSoldPercentage,
+        instantWinsCount: countsByCompetition.get(c.id) ?? 0,
       })),
       total: result.length,
     });

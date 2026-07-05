@@ -102,3 +102,19 @@ export const winners = pgTable('winners', {
   prizeChosen: varchar('prize_chosen', { length: 50 }),
   announcedAt: timestamp('announced_at').defaultNow().notNull(),
 });
+
+// Instant win prizes: a fixed ticket number is pre-designated as a winner when
+// created. The moment a ticket with that number is issued (at purchase time),
+// it is automatically matched and claimed - no live draw involved.
+export const instantWins = pgTable('instant_wins', {
+  id: text('id').primaryKey(),
+  competitionId: text('competition_id').references(() => competitions.id, { onDelete: 'cascade' }).notNull(),
+  ticketNumber: integer('ticket_number').notNull(),
+  prizeName: varchar('prize_name', { length: 255 }).notNull(),
+  prizeValue: integer('prize_value').notNull(),
+  ticketId: text('ticket_id').references(() => tickets.id, { onDelete: 'set null' }),
+  userId: text('user_id').references(() => users.id, { onDelete: 'set null' }),
+  claimedAt: timestamp('claimed_at'),
+  revealedAt: timestamp('revealed_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});

@@ -2,8 +2,13 @@ import HeroSection from '@/components/HeroSection';
 import CompetitionGrid from '@/components/CompetitionGrid';
 import HowItWorksSection from '@/components/HowItWorksSection';
 import WinnersSection from '@/components/WinnersSection';
+import InstantWinsSection from '@/components/InstantWinsSection';
 import FadeIn from '@/components/FadeIn';
 import Link from 'next/link';
+
+// Keep the live competition count and instant win stats fresh without
+// forcing full dynamic rendering on every request.
+export const revalidate = 60;
 
 export default function HomePage() {
   return (
@@ -31,6 +36,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <InstantWinsSection />
 
       {/* Featured Competitions */}
       <section className="py-16 lg:py-24">

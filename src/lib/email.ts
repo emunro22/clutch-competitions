@@ -114,6 +114,68 @@ export async function sendOrderNotification({
   });
 }
 
+// ── Instant win notification ──
+
+export async function sendInstantWinNotification({
+  customerName,
+  customerEmail,
+  competitionTitle,
+  prizeName,
+  ticketNumber,
+}: {
+  customerName: string;
+  customerEmail: string;
+  competitionTitle: string;
+  prizeName: string;
+  ticketNumber: number;
+}) {
+  const resend = getResend();
+
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: NOTIFICATION_EMAIL,
+    subject: `Instant Win Claimed: ${prizeName} (${competitionTitle})`,
+    html: emailWrapper(`
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="display: inline-block; background-color: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">⚡</div>
+        <h1 style="color: #F1F5F9; font-size: 22px; font-weight: 800; margin: 16px 0 4px 0;">Instant Win Claimed</h1>
+        <p style="color: #94A3B8; font-size: 14px; margin: 0;">A customer just landed an instant win prize</p>
+      </div>
+      <table style="width: 100%; border-collapse: collapse;">
+        ${detailRow('Customer', customerName)}
+        ${detailRow('Email', customerEmail)}
+        ${detailRow('Competition', competitionTitle)}
+        ${detailRow('Ticket Number', `#${String(ticketNumber).padStart(4, '0')}`)}
+        ${detailRow('Prize', prizeName, true)}
+      </table>
+    `),
+  });
+
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: customerEmail,
+    subject: `⚡ You just won an Instant Prize!`,
+    html: emailWrapper(`
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="display: inline-block; background-color: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">⚡</div>
+        <h1 style="color: #F1F5F9; font-size: 22px; font-weight: 800; margin: 16px 0 4px 0;">Instant Win, ${customerName.split(' ')[0]}!</h1>
+        <p style="color: #94A3B8; font-size: 14px; margin: 0;">One of your tickets was a pre-designated instant winner</p>
+      </div>
+      <table style="width: 100%; border-collapse: collapse;">
+        ${detailRow('Competition', competitionTitle)}
+        ${detailRow('Winning Ticket', `#${String(ticketNumber).padStart(4, '0')}`)}
+        ${detailRow('Prize', prizeName, true)}
+      </table>
+      <div style="margin-top: 24px; text-align: center;">
+        <p style="color: #94A3B8; font-size: 13px; margin: 0 0 16px 0;">Log in to your account to reveal and claim your prize.</p>
+        <div style="display: inline-block; background: linear-gradient(135deg, #F59E0B, #FBBF24); border-radius: 12px; padding: 14px 32px;">
+          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://clutchcompetitions.co.uk'}/account/tickets" style="color: #0A0E1A; text-decoration: none; font-weight: 800; font-size: 15px;">View My Win</a>
+        </div>
+      </div>
+    `),
+  });
+}
+
 // ── Verification code email ──
 
 export async function sendVerificationCode({

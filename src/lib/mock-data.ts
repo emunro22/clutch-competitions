@@ -15,6 +15,7 @@ export interface Competition {
   featured: boolean;
   maxPerPerson: number;
   minimumSoldPercentage: number;
+  instantWinsCount?: number;
 }
 
 export interface Winner {

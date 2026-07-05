@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { orders, tickets, competitions, users } from '@/lib/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { sendOrderNotification } from '@/lib/email';
+import { claimInstantWins } from '@/lib/instant-wins';
 import { v4 as uuid } from 'uuid';
 
 export async function POST(request: Request) {
@@ -62,14 +63,24 @@ export async function POST(request: Request) {
 
       // Create individual ticket records
       const startNumber = comp.ticketsSold + 1;
+      const issuedTickets: { ticketId: string; ticketNumber: number; userId: string }[] = [];
       for (let i = 0; i < order.quantity; i++) {
+        const ticketId = uuid();
+        const ticketNumber = startNumber + i;
         await db.insert(tickets).values({
-          id: uuid(),
+          id: ticketId,
           userId: order.userId,
           competitionId: order.competitionId,
-          ticketNumber: startNumber + i,
+          ticketNumber,
           orderId: order.id,
         });
+        issuedTickets.push({ ticketId, ticketNumber, userId: order.userId });
+      }
+
+      try {
+        await claimInstantWins(order.competitionId, issuedTickets);
+      } catch (instantWinError) {
+        console.error('Failed to process instant wins:', instantWinError);
       }
 
       // Update tickets sold count on competition
