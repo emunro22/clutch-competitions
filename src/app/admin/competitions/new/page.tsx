@@ -32,6 +32,8 @@ export default function NewCompetitionPage() {
   const [drawDate, setDrawDate] = useState('');
   const [threshold, setThreshold] = useState(85);
   const [featured, setFeatured] = useState(false);
+  const [instaWin, setInstaWin] = useState(false);
+  const [instaWinDisplayMode, setInstaWinDisplayMode] = useState<'countdown' | 'prize_count' | 'jackpot'>('countdown');
 
   useEffect(() => {
     fetch('/api/admin/categories')
@@ -85,6 +87,8 @@ export default function NewCompetitionPage() {
           drawDate: new Date(drawDate).toISOString(),
           minimumSoldPercentage: threshold,
           featured,
+          instaWin,
+          instaWinDisplayMode,
         }),
       });
 
@@ -275,6 +279,37 @@ export default function NewCompetitionPage() {
                 Feature this competition on the homepage
               </label>
             </div>
+          </div>
+
+          <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
+            <div>
+              <h2 className="text-lg font-bold text-foreground">InstaWin Listing</h2>
+              <p className="text-xs text-muted font-medium mt-0.5">
+                List this competition on the dedicated /instawin page instead of (or as well as) the standard listings.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <input type="checkbox" id="instaWin" checked={instaWin} onChange={(e) => setInstaWin(e.target.checked)} className="w-4 h-4 rounded border-border bg-background text-primary focus:ring-primary" />
+              <label htmlFor="instaWin" className="text-sm text-foreground font-medium">
+                Show on the InstaWin page
+              </label>
+            </div>
+
+            {instaWin && (
+              <div>
+                <label className="block text-sm font-semibold text-foreground mb-1.5">Card Display Mode</label>
+                <select
+                  value={instaWinDisplayMode}
+                  onChange={(e) => setInstaWinDisplayMode(e.target.value as 'countdown' | 'prize_count' | 'jackpot')}
+                  className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors cursor-pointer"
+                >
+                  <option value="countdown">Countdown (Ends in X days)</option>
+                  <option value="prize_count">Prize Count (e.g. 200,000 Prizes remaining)</option>
+                  <option value="jackpot">Rolling Jackpot (prize pot vs. amount already won)</option>
+                </select>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center justify-end gap-4">

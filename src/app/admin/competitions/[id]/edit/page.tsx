@@ -37,6 +37,8 @@ interface Competition {
   featured: boolean;
   maxPerPerson: number;
   minimumSoldPercentage: number;
+  instaWin: boolean;
+  instaWinDisplayMode: 'countdown' | 'prize_count' | 'jackpot';
 }
 
 export default function EditCompetitionPage({
@@ -66,6 +68,8 @@ export default function EditCompetitionPage({
   const [drawDate, setDrawDate] = useState('');
   const [threshold, setThreshold] = useState(85);
   const [featured, setFeatured] = useState(false);
+  const [instaWin, setInstaWin] = useState(false);
+  const [instaWinDisplayMode, setInstaWinDisplayMode] = useState<'countdown' | 'prize_count' | 'jackpot'>('countdown');
 
   const [instantWins, setInstantWins] = useState<InstantWinPrize[]>([]);
   const [iwTicketNumber, setIwTicketNumber] = useState('');
@@ -92,6 +96,8 @@ export default function EditCompetitionPage({
           setMaxPerPerson(found.maxPerPerson.toString());
           setThreshold(found.minimumSoldPercentage);
           setFeatured(found.featured);
+          setInstaWin(found.instaWin);
+          setInstaWinDisplayMode(found.instaWinDisplayMode || 'countdown');
           const d = new Date(found.drawDate);
           setDrawDate(d.toISOString().slice(0, 16));
         }
@@ -204,6 +210,8 @@ export default function EditCompetitionPage({
           drawDate: new Date(drawDate).toISOString(),
           minimumSoldPercentage: threshold,
           featured,
+          instaWin,
+          instaWinDisplayMode,
         }),
       });
 
@@ -444,9 +452,40 @@ export default function EditCompetitionPage({
 
           <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
             <div>
+              <h2 className="text-lg font-bold text-foreground">InstaWin Listing</h2>
+              <p className="text-xs text-muted font-medium mt-0.5">
+                List this competition on the dedicated /instawin page instead of (or as well as) the standard listings.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <input type="checkbox" id="instaWin" checked={instaWin} onChange={(e) => setInstaWin(e.target.checked)} className="w-4 h-4 rounded border-border bg-background text-primary focus:ring-primary" />
+              <label htmlFor="instaWin" className="text-sm text-foreground font-medium">
+                Show on the InstaWin page
+              </label>
+            </div>
+
+            {instaWin && (
+              <div>
+                <label className="block text-sm font-semibold text-foreground mb-1.5">Card Display Mode</label>
+                <select
+                  value={instaWinDisplayMode}
+                  onChange={(e) => setInstaWinDisplayMode(e.target.value as 'countdown' | 'prize_count' | 'jackpot')}
+                  className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors cursor-pointer"
+                >
+                  <option value="countdown">Countdown (Ends in X days)</option>
+                  <option value="prize_count">Prize Count (e.g. 200,000 Prizes remaining)</option>
+                  <option value="jackpot">Rolling Jackpot (prize pot vs. amount already won)</option>
+                </select>
+              </div>
+            )}
+          </div>
+
+          <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
+            <div>
               <h2 className="text-lg font-bold text-foreground">Instant Wins</h2>
               <p className="text-xs text-muted font-medium mt-0.5">
-                Pre-designate specific ticket numbers as instant winners. The moment that ticket is sold, the buyer wins automatically, no draw required.
+                Pre-designate specific ticket numbers as instant winners. Once that ticket is sold and this competition&apos;s ticket revenue covers the prize&apos;s value, the buyer is notified automatically, no draw required.
               </p>
             </div>
 

@@ -34,6 +34,8 @@ export async function PUT(
     if (body.featured !== undefined) updates.featured = body.featured;
     if (body.maxPerPerson !== undefined) updates.maxPerPerson = body.maxPerPerson;
     if (body.minimumSoldPercentage !== undefined) updates.minimumSoldPercentage = body.minimumSoldPercentage;
+    if (body.instaWin !== undefined) updates.instaWin = body.instaWin;
+    if (body.instaWinDisplayMode !== undefined) updates.instaWinDisplayMode = body.instaWinDisplayMode;
 
     await db
       .update(competitions)

@@ -16,6 +16,9 @@ export interface Competition {
   maxPerPerson: number;
   minimumSoldPercentage: number;
   instantWinsCount?: number;
+  instaWin?: boolean;
+  instaWinDisplayMode?: 'countdown' | 'prize_count' | 'jackpot';
+  instantWinsPaidOut?: number;
 }
 
 export interface Winner {

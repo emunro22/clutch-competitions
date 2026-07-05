@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth-context';
 
 const navLinks = [
   { href: '/competitions', label: 'Competitions' },
+  { href: '/instawin', label: 'InstaWin' },
   { href: '/winners', label: 'Winners' },
   { href: '/how-it-works', label: 'How It Works' },
   { href: '/faq', label: 'FAQ' },

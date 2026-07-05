@@ -1,12 +1,13 @@
 import { db } from '@/lib/db';
 import { competitions, instantWins } from '@/lib/db/schema';
-import { eq, and, sql, isNull } from 'drizzle-orm';
+import { eq, and, sql, isNull, isNotNull } from 'drizzle-orm';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const category = searchParams.get('category');
   const status = searchParams.get('status');
   const featured = searchParams.get('featured');
+  const instaWin = searchParams.get('instaWin');
 
   try {
     const conditions = [];
@@ -19,6 +20,9 @@ export async function GET(request: Request) {
     }
     if (featured === 'true') {
       conditions.push(eq(competitions.featured, true));
+    }
+    if (instaWin === 'true') {
+      conditions.push(eq(competitions.instaWin, true));
     }
 
     const result = await db
@@ -36,7 +40,17 @@ export async function GET(request: Request) {
       .where(isNull(instantWins.claimedAt))
       .groupBy(instantWins.competitionId);
 
+    const paidOutSums = await db
+      .select({
+        competitionId: instantWins.competitionId,
+        total: sql<number>`coalesce(sum(${instantWins.prizeValue}), 0)::int`,
+      })
+      .from(instantWins)
+      .where(isNotNull(instantWins.claimedAt))
+      .groupBy(instantWins.competitionId);
+
     const countsByCompetition = new Map(instantWinCounts.map((row) => [row.competitionId, row.count]));
+    const paidOutByCompetition = new Map(paidOutSums.map((row) => [row.competitionId, row.total]));
 
     return Response.json({
       competitions: result.map((c) => ({
@@ -56,7 +70,10 @@ export async function GET(request: Request) {
         featured: c.featured,
         maxPerPerson: c.maxPerPerson,
         minimumSoldPercentage: c.minimumSoldPercentage,
+        instaWin: c.instaWin,
+        instaWinDisplayMode: c.instaWinDisplayMode,
         instantWinsCount: countsByCompetition.get(c.id) ?? 0,
+        instantWinsPaidOut: paidOutByCompetition.get(c.id) ?? 0,
       })),
       total: result.length,
     });

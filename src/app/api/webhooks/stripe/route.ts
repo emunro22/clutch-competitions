@@ -77,13 +77,8 @@ export async function POST(request: Request) {
         issuedTickets.push({ ticketId, ticketNumber, userId: order.userId });
       }
 
-      try {
-        await claimInstantWins(order.competitionId, issuedTickets);
-      } catch (instantWinError) {
-        console.error('Failed to process instant wins:', instantWinError);
-      }
-
-      // Update tickets sold count on competition
+      // Update tickets sold count on competition first, so the instant win
+      // activation check below sees the up-to-date revenue for this competition.
       await db
         .update(competitions)
         .set({
@@ -91,6 +86,12 @@ export async function POST(request: Request) {
           updatedAt: new Date(),
         })
         .where(eq(competitions.id, order.competitionId));
+
+      try {
+        await claimInstantWins(order.competitionId, issuedTickets);
+      } catch (instantWinError) {
+        console.error('Failed to process instant wins:', instantWinError);
+      }
 
       // Check if competition is now sold out
       const newSold = comp.ticketsSold + order.quantity;

@@ -40,6 +40,8 @@ export async function POST(request: Request) {
       featured,
       maxPerPerson,
       minimumSoldPercentage,
+      instaWin,
+      instaWinDisplayMode,
     } = body;
 
     if (!title || !description || !ticketPrice || !totalTickets || !drawDate || !category) {
@@ -64,6 +66,8 @@ export async function POST(request: Request) {
       featured: featured || false,
       maxPerPerson: maxPerPerson || 100,
       minimumSoldPercentage: minimumSoldPercentage || 85,
+      instaWin: instaWin || false,
+      instaWinDisplayMode: instaWinDisplayMode || 'countdown',
     });
 
     return Response.json({ id, slug }, { status: 201 });

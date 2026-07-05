@@ -22,6 +22,12 @@ export const verificationCodeTypeEnum = pgEnum('verification_code_type', [
   'password_reset',
 ]);
 
+export const instaWinDisplayModeEnum = pgEnum('insta_win_display_mode', [
+  'countdown',
+  'prize_count',
+  'jackpot',
+]);
+
 export const users = pgTable('users', {
   id: text('id').primaryKey(),
   email: varchar('email', { length: 255 }).notNull().unique(),
@@ -70,6 +76,8 @@ export const competitions = pgTable('competitions', {
   featured: boolean('featured').default(false).notNull(),
   maxPerPerson: integer('max_per_person').default(100).notNull(),
   minimumSoldPercentage: integer('minimum_sold_percentage').default(85).notNull(),
+  instaWin: boolean('insta_win').default(false).notNull(),
+  instaWinDisplayMode: instaWinDisplayModeEnum('insta_win_display_mode').default('countdown').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -104,8 +112,10 @@ export const winners = pgTable('winners', {
 });
 
 // Instant win prizes: a fixed ticket number is pre-designated as a winner when
-// created. The moment a ticket with that number is issued (at purchase time),
-// it is automatically matched and claimed - no live draw involved.
+// created. Once a ticket with that number is issued, it is "matched" (matchedAt).
+// It only becomes "claimed" (claimedAt, winner notified) once the competition's
+// ticket revenue has covered the prize's value - so a prize is never awarded
+// before its cost has actually been earned back.
 export const instantWins = pgTable('instant_wins', {
   id: text('id').primaryKey(),
   competitionId: text('competition_id').references(() => competitions.id, { onDelete: 'cascade' }).notNull(),
@@ -114,6 +124,7 @@ export const instantWins = pgTable('instant_wins', {
   prizeValue: integer('prize_value').notNull(),
   ticketId: text('ticket_id').references(() => tickets.id, { onDelete: 'set null' }),
   userId: text('user_id').references(() => users.id, { onDelete: 'set null' }),
+  matchedAt: timestamp('matched_at'),
   claimedAt: timestamp('claimed_at'),
   revealedAt: timestamp('revealed_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
