@@ -17,6 +17,11 @@ interface DrawResult {
   ticketNumber: number;
   winnerName: string;
   winnerEmail: string;
+  winnerPhone: string;
+  winnerAddressLine1: string;
+  winnerAddressLine2: string;
+  winnerCity: string;
+  winnerPostcode: string;
   competition: string;
 }
 
@@ -183,8 +188,21 @@ export default function AdminDrawsPage() {
                   Ticket #{String(result.ticketNumber).padStart(4, '0')}
                 </p>
                 <p className="text-lg font-bold text-foreground mt-3">{result.winnerName}</p>
-                <p className="text-sm text-muted font-medium">{result.winnerEmail}</p>
-                <p className="text-xs text-muted mt-2 font-medium">{result.competition}</p>
+                <div className="mt-3 pt-3 border-t border-success/20 text-left space-y-1">
+                  <p className="text-sm text-muted font-medium">
+                    <span className="text-foreground font-bold">Email: </span>{result.winnerEmail}
+                  </p>
+                  <p className="text-sm text-muted font-medium">
+                    <span className="text-foreground font-bold">Phone: </span>{result.winnerPhone}
+                  </p>
+                  <p className="text-sm text-muted font-medium">
+                    <span className="text-foreground font-bold">Address: </span>
+                    {[result.winnerAddressLine1, result.winnerAddressLine2, result.winnerCity, result.winnerPostcode]
+                      .filter(Boolean)
+                      .join(', ')}
+                  </p>
+                </div>
+                <p className="text-xs text-muted mt-3 font-medium">{result.competition}</p>
               </div>
             )}
           </div>

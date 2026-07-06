@@ -11,6 +11,10 @@ export default function RegisterPage() {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [addressLine1, setAddressLine1] = useState('');
+  const [addressLine2, setAddressLine2] = useState('');
+  const [city, setCity] = useState('');
+  const [postcode, setPostcode] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,7 +27,18 @@ export default function RegisterPage() {
     setLoading(true);
     setError('');
 
-    const result = await register({ email, password, firstName, lastName, phone: phone || undefined, dateOfBirth });
+    const result = await register({
+      email,
+      password,
+      firstName,
+      lastName,
+      phone,
+      addressLine1,
+      addressLine2: addressLine2 || undefined,
+      city,
+      postcode,
+      dateOfBirth,
+    });
     if (result.error) {
       setError(result.error);
       setLoading(false);
@@ -95,9 +110,58 @@ export default function RegisterPage() {
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
+              required
               className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
               placeholder="07xxx xxxxxx"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-foreground mb-1.5">Address Line 1</label>
+            <input
+              type="text"
+              value={addressLine1}
+              onChange={(e) => setAddressLine1(e.target.value)}
+              required
+              className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
+              placeholder="123 Main Street"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-foreground mb-1.5">Address Line 2 <span className="text-muted font-normal">(optional)</span></label>
+            <input
+              type="text"
+              value={addressLine2}
+              onChange={(e) => setAddressLine2(e.target.value)}
+              className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
+              placeholder="Flat 4"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-foreground mb-1.5">City</label>
+              <input
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                required
+                className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
+                placeholder="Glasgow"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-foreground mb-1.5">Postcode</label>
+              <input
+                type="text"
+                value={postcode}
+                onChange={(e) => setPostcode(e.target.value)}
+                required
+                className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
+                placeholder="G1 1AA"
+              />
+            </div>
           </div>
 
           <div>

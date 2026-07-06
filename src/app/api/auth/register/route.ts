@@ -10,9 +10,9 @@ import crypto from 'crypto';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, password, firstName, lastName, phone, dateOfBirth } = body;
+    const { email, password, firstName, lastName, phone, addressLine1, addressLine2, city, postcode, dateOfBirth } = body;
 
-    if (!email || !password || !firstName || !lastName || !dateOfBirth) {
+    if (!email || !password || !firstName || !lastName || !phone || !addressLine1 || !city || !postcode || !dateOfBirth) {
       return Response.json(
         { error: 'All required fields must be filled in' },
         { status: 400 }
@@ -67,7 +67,11 @@ export async function POST(request: Request) {
       email: normalizedEmail,
       passwordHash,
       name,
-      phone: phone || null,
+      phone,
+      addressLine1,
+      addressLine2: addressLine2 || null,
+      city,
+      postcode,
       dateOfBirth: dateOfBirth,
       emailVerified: false,
       role: 'user',
@@ -77,7 +81,11 @@ export async function POST(request: Request) {
     sendSignupNotification({
       customerName: name,
       customerEmail: normalizedEmail,
-      phone: phone || undefined,
+      phone,
+      addressLine1,
+      addressLine2: addressLine2 || undefined,
+      city,
+      postcode,
       dateOfBirth,
     }).catch((err) => console.error('Signup notification email failed:', err));
 

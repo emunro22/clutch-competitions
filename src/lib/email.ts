@@ -250,14 +250,24 @@ export async function sendSignupNotification({
   customerName,
   customerEmail,
   phone,
+  addressLine1,
+  addressLine2,
+  city,
+  postcode,
   dateOfBirth,
 }: {
   customerName: string;
   customerEmail: string;
   phone?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  postcode?: string;
   dateOfBirth?: string;
 }) {
   const resend = getResend();
+
+  const address = [addressLine1, addressLine2, city, postcode].filter(Boolean).join(', ');
 
   // Admin notification
   await resend.emails.send({
@@ -274,6 +284,7 @@ export async function sendSignupNotification({
         ${detailRow('Name', customerName)}
         ${detailRow('Email', customerEmail)}
         ${phone ? detailRow('Phone', phone) : ''}
+        ${address ? detailRow('Address', address) : ''}
         ${dateOfBirth ? detailRow('Date of Birth', new Date(dateOfBirth).toLocaleDateString('en-GB')) : ''}
       </table>
     `),

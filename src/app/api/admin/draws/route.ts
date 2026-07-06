@@ -59,7 +59,15 @@ export async function POST(request: Request) {
 
     // Get winner's details
     const [winner] = await db
-      .select({ name: users.name, email: users.email })
+      .select({
+        name: users.name,
+        email: users.email,
+        phone: users.phone,
+        addressLine1: users.addressLine1,
+        addressLine2: users.addressLine2,
+        city: users.city,
+        postcode: users.postcode,
+      })
       .from(users)
       .where(eq(users.id, winningTicket.userId))
       .limit(1);
@@ -82,6 +90,11 @@ export async function POST(request: Request) {
       ticketNumber: winningTicket.ticketNumber,
       winnerName: winner?.name || 'Unknown',
       winnerEmail: winner?.email || 'Unknown',
+      winnerPhone: winner?.phone || 'Unknown',
+      winnerAddressLine1: winner?.addressLine1 || 'Unknown',
+      winnerAddressLine2: winner?.addressLine2 || '',
+      winnerCity: winner?.city || 'Unknown',
+      winnerPostcode: winner?.postcode || 'Unknown',
       competition: comp.title,
     });
   } catch (error) {

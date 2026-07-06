@@ -13,7 +13,7 @@ interface AuthContextType {
   user: SessionUser | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<{ error?: string; requiresVerification?: boolean; email?: string }>;
-  register: (data: { email: string; password: string; firstName: string; lastName: string; phone?: string; dateOfBirth: string }) => Promise<{ error?: string; requiresVerification?: boolean; email?: string }>;
+  register: (data: { email: string; password: string; firstName: string; lastName: string; phone: string; addressLine1: string; addressLine2?: string; city: string; postcode: string; dateOfBirth: string }) => Promise<{ error?: string; requiresVerification?: boolean; email?: string }>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return {};
   }, []);
 
-  const register = useCallback(async (payload: { email: string; password: string; firstName: string; lastName: string; phone?: string; dateOfBirth: string }) => {
+  const register = useCallback(async (payload: { email: string; password: string; firstName: string; lastName: string; phone: string; addressLine1: string; addressLine2?: string; city: string; postcode: string; dateOfBirth: string }) => {
     const res = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
