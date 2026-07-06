@@ -9,6 +9,8 @@ function getResend() {
 
 const NOTIFICATION_EMAIL = 'Decolow@icloud.com';
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Clutch Competitions <noreply@clutchcompetitions.co.uk>';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://clutchcompetitions.co.uk';
+const LOGO_URL = `${APP_URL}/logo.png`;
 
 // ── Shared email wrapper matching the site's dark theme ──
 
@@ -21,7 +23,7 @@ function emailWrapper(content: string) {
   <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
     <!-- Header -->
     <div style="text-align: center; margin-bottom: 32px;">
-      <div style="display: inline-block; width: 48px; height: 48px; background: linear-gradient(135deg, #F59E0B, #FBBF24); border-radius: 12px; line-height: 48px; font-weight: 900; color: #0A0E1A; font-size: 20px; letter-spacing: -1px;">CC</div>
+      <img src="${LOGO_URL}" alt="Clutch Competitions" width="56" height="56" style="width: 56px; height: 56px; object-fit: contain; display: inline-block;" />
       <div style="margin-top: 12px;">
         <span style="font-size: 20px; font-weight: 800; color: #F1F5F9; letter-spacing: -0.5px;">Clutch</span><span style="font-size: 20px; font-weight: 800; color: #F59E0B; letter-spacing: -0.5px;">Comps</span>
       </div>
