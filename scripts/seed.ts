@@ -16,12 +16,13 @@ async function seed() {
 
   await db.insert(schema.users).values({
     id: adminId,
-    email: 'Decolow@icloud.com',
+    email: 'decolow@icloud.com',
     passwordHash: adminHash,
     name: 'Admin',
     role: 'admin',
+    emailVerified: true,
   });
-  console.log('✓ Admin user created: Decolow@icloud.com / ClutchAdmin2026!');
+  console.log('✓ Admin user created: decolow@icloud.com / ClutchAdmin2026!');
 
   // Seed categories
   const categorySeed = [

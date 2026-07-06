@@ -1,6 +1,6 @@
 import { getSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { competitions } from '@/lib/db/schema';
+import { competitions, competitionImages } from '@/lib/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { v4 as uuid } from 'uuid';
 import { slugify } from '@/lib/utils';
@@ -16,7 +16,24 @@ export async function GET() {
     .from(competitions)
     .orderBy(sql`${competitions.createdAt} desc`);
 
-  return Response.json({ competitions: allComps });
+  const allImages = await db
+    .select()
+    .from(competitionImages)
+    .orderBy(competitionImages.sortOrder);
+
+  const imagesByCompetition = new Map<string, string[]>();
+  for (const img of allImages) {
+    const list = imagesByCompetition.get(img.competitionId) ?? [];
+    list.push(img.url);
+    imagesByCompetition.set(img.competitionId, list);
+  }
+
+  return Response.json({
+    competitions: allComps.map((c) => ({
+      ...c,
+      images: imagesByCompetition.get(c.id) ?? (c.imageUrl ? [c.imageUrl] : []),
+    })),
+  });
 }
 
 export async function POST(request: Request) {
@@ -31,6 +48,7 @@ export async function POST(request: Request) {
       title,
       description,
       imageUrl,
+      images,
       cashAlternative,
       ticketPrice,
       totalTickets,
@@ -50,13 +68,14 @@ export async function POST(request: Request) {
 
     const id = uuid();
     const slug = slugify(title);
+    const imageList: string[] = Array.isArray(images) ? images : [];
 
     await db.insert(competitions).values({
       id,
       title,
       slug,
       description,
-      imageUrl: imageUrl || null,
+      imageUrl: imageList[0] || imageUrl || null,
       cashAlternative: cashAlternative || null,
       ticketPrice,
       totalTickets,
@@ -69,6 +88,17 @@ export async function POST(request: Request) {
       instaWin: instaWin || false,
       instaWinDisplayMode: instaWinDisplayMode || 'countdown',
     });
+
+    if (imageList.length > 0) {
+      await db.insert(competitionImages).values(
+        imageList.map((url, index) => ({
+          id: uuid(),
+          competitionId: id,
+          url,
+          sortOrder: index,
+        }))
+      );
+    }
 
     return Response.json({ id, slug }, { status: 201 });
   } catch (error) {

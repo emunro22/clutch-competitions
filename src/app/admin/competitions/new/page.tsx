@@ -17,7 +17,7 @@ export default function NewCompetitionPage() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
 
@@ -56,13 +56,28 @@ export default function NewCompetitionPage() {
       form.append('file', file);
       const res = await fetch('/api/upload', { method: 'POST', body: form });
       const data = await res.json();
-      if (data.url) setImageUrl(data.url);
+      if (data.url) setImages((prev) => [...prev, data.url]);
       else setError(data.error || 'Upload failed');
     } catch {
       setError('Image upload failed');
     } finally {
       setUploading(false);
+      if (fileRef.current) fileRef.current.value = '';
     }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleMoveImage = (index: number, direction: -1 | 1) => {
+    setImages((prev) => {
+      const next = [...prev];
+      const target = index + direction;
+      if (target < 0 || target >= next.length) return prev;
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -79,7 +94,7 @@ export default function NewCompetitionPage() {
           description,
           category,
           status,
-          imageUrl: imageUrl || null,
+          images,
           cashAlternative: cashAlternative ? Math.round(parseFloat(cashAlternative) * 100) : null,
           ticketPrice: Math.round(parseFloat(ticketPrice) * 100),
           totalTickets: parseInt(totalTickets),
@@ -187,44 +202,86 @@ export default function NewCompetitionPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-foreground mb-1.5">Prize Image</label>
+              <label className="block text-sm font-semibold text-foreground mb-1.5">Prize Images</label>
+              <p className="text-xs text-muted mb-3 font-medium">
+                Upload one or more photos. The first image is used as the cover shown on cards and in the cart.
+              </p>
               <input type="file" ref={fileRef} accept="image/*" onChange={handleUpload} className="hidden" />
-              {imageUrl ? (
-                <div className="relative aspect-video rounded-xl overflow-hidden border border-border">
-                  <Image src={imageUrl} alt="Prize" fill className="object-cover" sizes="600px" />
-                  <button
-                    type="button"
-                    onClick={() => { setImageUrl(''); if (fileRef.current) fileRef.current.value = ''; }}
-                    className="absolute top-2 right-2 w-8 h-8 bg-background/80 backdrop-blur-sm rounded-lg flex items-center justify-center text-danger hover:bg-danger hover:text-background transition-colors"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => fileRef.current?.click()}
-                  disabled={uploading}
-                  className="w-full border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-primary/50 transition-colors cursor-pointer disabled:opacity-50"
-                >
-                  {uploading ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                      <span className="text-sm text-muted font-medium">Uploading...</span>
+
+              {images.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
+                  {images.map((url, index) => (
+                    <div key={url + index} className="relative aspect-video rounded-xl overflow-hidden border border-border group">
+                      <Image src={url} alt={`Prize ${index + 1}`} fill className="object-cover" sizes="300px" />
+                      {index === 0 && (
+                        <span className="absolute top-2 left-2 bg-primary text-background text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg">
+                          Cover
+                        </span>
+                      )}
+                      <div className="absolute top-2 right-2 flex gap-1">
+                        {index > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => handleMoveImage(index, -1)}
+                            className="w-7 h-7 bg-background/80 backdrop-blur-sm rounded-lg flex items-center justify-center text-foreground hover:bg-primary hover:text-background transition-colors"
+                            aria-label="Move earlier"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 17l-5-5 5-5M18 17l-5-5 5-5" />
+                            </svg>
+                          </button>
+                        )}
+                        {index < images.length - 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleMoveImage(index, 1)}
+                            className="w-7 h-7 bg-background/80 backdrop-blur-sm rounded-lg flex items-center justify-center text-foreground hover:bg-primary hover:text-background transition-colors"
+                            aria-label="Move later"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17l5-5-5-5M6 17l5-5-5-5" />
+                            </svg>
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(index)}
+                          className="w-7 h-7 bg-background/80 backdrop-blur-sm rounded-lg flex items-center justify-center text-danger hover:bg-danger hover:text-background transition-colors"
+                          aria-label="Remove image"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
-                  ) : (
-                    <>
-                      <svg className="w-10 h-10 mx-auto text-muted mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <p className="text-sm text-muted font-medium">Click to upload image</p>
-                      <p className="text-xs text-muted mt-1">PNG, JPG, WebP up to 5MB</p>
-                    </>
-                  )}
-                </button>
+                  ))}
+                </div>
               )}
+
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                disabled={uploading}
+                className="w-full border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-primary/50 transition-colors cursor-pointer disabled:opacity-50"
+              >
+                {uploading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    <span className="text-sm text-muted font-medium">Uploading...</span>
+                  </div>
+                ) : (
+                  <>
+                    <svg className="w-10 h-10 mx-auto text-muted mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p className="text-sm text-muted font-medium">
+                      {images.length > 0 ? 'Click to add another image' : 'Click to upload image'}
+                    </p>
+                    <p className="text-xs text-muted mt-1">PNG, JPG, WebP up to 5MB</p>
+                  </>
+                )}
+              </button>
             </div>
           </div>
 

@@ -4,6 +4,7 @@ export interface Competition {
   slug: string;
   description: string;
   imageUrl: string;
+  images?: string[];
   prizeValue: number | null;
   cashAlternative: number | null;
   ticketPrice: number;

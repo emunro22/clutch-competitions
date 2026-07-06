@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { competitions, orders } from '@/lib/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { v4 as uuid } from 'uuid';
+import { checkSkillAnswer } from '@/lib/skill-questions';
 
 interface CartItem {
   competitionId: string;
@@ -20,6 +21,19 @@ export async function POST(request: Request) {
     const body = await request.json();
     const items: CartItem[] = body.items;
     const turnstileToken: string | undefined = body.turnstileToken;
+    const skillQuestionId: string | undefined = body.skillQuestionId;
+    const skillAnswerIndex: number | undefined = body.skillAnswerIndex;
+
+    if (
+      !skillQuestionId ||
+      typeof skillAnswerIndex !== 'number' ||
+      !checkSkillAnswer(skillQuestionId, skillAnswerIndex)
+    ) {
+      return Response.json(
+        { error: 'Incorrect answer to the skill question, please try again.' },
+        { status: 400 }
+      );
+    }
 
     // Verify Turnstile captcha
     if (process.env.TURNSTILE_SECRET_KEY) {

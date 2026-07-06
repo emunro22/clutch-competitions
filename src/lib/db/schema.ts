@@ -86,6 +86,14 @@ export const competitions = pgTable('competitions', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+export const competitionImages = pgTable('competition_images', {
+  id: text('id').primaryKey(),
+  competitionId: text('competition_id').references(() => competitions.id, { onDelete: 'cascade' }).notNull(),
+  url: text('url').notNull(),
+  sortOrder: integer('sort_order').default(0).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 export const tickets = pgTable('tickets', {
   id: text('id').primaryKey(),
   userId: text('user_id').references(() => users.id).notNull(),

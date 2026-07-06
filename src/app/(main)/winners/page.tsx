@@ -14,8 +14,8 @@ export default function WinnersPage() {
 
       <div className="animate-fade-in-up grid grid-cols-2 sm:grid-cols-4 gap-4 mb-14" style={{ animationDelay: '100ms' }}>
         {[
-          { value: '500+', label: 'Total Winners' },
-          { value: '£2M+', label: 'Prizes Awarded' },
+          { value: '10+', label: 'Total Winners' },
+          { value: '£100k+', label: 'Prizes Awarded' },
           { value: '48hrs', label: 'Avg Cash Payout' },
           { value: '100%', label: 'Prizes Claimed' },
         ].map((stat) => (

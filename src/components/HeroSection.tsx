@@ -75,9 +75,9 @@ export default async function HeroSection() {
 
             <div className="animate-fade-in mt-12 flex flex-wrap items-center justify-center lg:justify-start gap-6 sm:gap-10 text-muted" style={{ animationDelay: '500ms' }}>
               {[
-                { value: '500+', label: 'Winners' },
-                { value: '£2M+', label: 'Prizes Won' },
-                { value: '4.8★', label: 'Trust Rating' },
+                { value: '10+', label: 'Winners' },
+                { value: '£100k+', label: 'Prizes Won' },
+                { value: '5★', label: 'Trust Rating' },
                 { value: '100%', label: 'Verified Draws' },
               ].map((stat) => (
                 <div key={stat.label} className="text-center lg:text-left">
@@ -95,7 +95,7 @@ export default async function HeroSection() {
               width={400}
               height={400}
               aria-hidden="true"
-              className="pointer-events-none select-none absolute -z-10 -top-24 -right-24 w-md h-112 lg:w-xl lg:h-144 object-contain opacity-45"
+              className="pointer-events-none select-none absolute -z-10 -top-24 -right-24 w-md h-112 lg:w-xl lg:h-144 object-contain"
             />
             <HeroSlideshow />
           </div>

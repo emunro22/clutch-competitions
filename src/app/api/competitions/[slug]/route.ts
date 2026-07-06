@@ -1,6 +1,8 @@
 import { db } from '@/lib/db';
-import { competitions } from '@/lib/db/schema';
+import { competitions, competitionImages } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1642961597907-fc6fbff01720?w=800&h=600&fit=crop&q=80';
 
 export async function GET(
   request: Request,
@@ -19,13 +21,23 @@ export async function GET(
       return Response.json({ error: 'Competition not found' }, { status: 404 });
     }
 
+    const galleryRows = await db
+      .select()
+      .from(competitionImages)
+      .where(eq(competitionImages.competitionId, competition.id))
+      .orderBy(competitionImages.sortOrder);
+    const images = galleryRows.length > 0
+      ? galleryRows.map((img) => img.url)
+      : [competition.imageUrl || FALLBACK_IMAGE];
+
     return Response.json({
       competition: {
         id: competition.id,
         title: competition.title,
         slug: competition.slug,
         description: competition.description,
-        imageUrl: competition.imageUrl || 'https://images.unsplash.com/photo-1642961597907-fc6fbff01720?w=800&h=600&fit=crop&q=80',
+        imageUrl: competition.imageUrl || FALLBACK_IMAGE,
+        images,
         prizeValue: competition.prizeValue,
         cashAlternative: competition.cashAlternative,
         ticketPrice: competition.ticketPrice,

@@ -1,7 +1,8 @@
 import { getSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { competitions } from '@/lib/db/schema';
+import { competitions, competitionImages } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { v4 as uuid } from 'uuid';
 import { slugify } from '@/lib/utils';
 
 export async function PUT(
@@ -25,6 +26,12 @@ export async function PUT(
     }
     if (body.description !== undefined) updates.description = body.description;
     if (body.imageUrl !== undefined) updates.imageUrl = body.imageUrl;
+
+    const imageList: string[] | undefined = Array.isArray(body.images) ? body.images : undefined;
+    if (imageList !== undefined) {
+      updates.imageUrl = imageList[0] || null;
+    }
+
     if (body.cashAlternative !== undefined) updates.cashAlternative = body.cashAlternative;
     if (body.ticketPrice !== undefined) updates.ticketPrice = body.ticketPrice;
     if (body.totalTickets !== undefined) updates.totalTickets = body.totalTickets;
@@ -41,6 +48,20 @@ export async function PUT(
       .update(competitions)
       .set(updates)
       .where(eq(competitions.id, id));
+
+    if (imageList !== undefined) {
+      await db.delete(competitionImages).where(eq(competitionImages.competitionId, id));
+      if (imageList.length > 0) {
+        await db.insert(competitionImages).values(
+          imageList.map((url, index) => ({
+            id: uuid(),
+            competitionId: id,
+            url,
+            sortOrder: index,
+          }))
+        );
+      }
+    }
 
     return Response.json({ success: true });
   } catch (error) {

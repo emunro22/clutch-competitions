@@ -1,6 +1,6 @@
 'use client';
 
-import { use } from 'react';
+import { use, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { formatPrice, formatPriceShort, percentSold } from '@/lib/utils';
@@ -16,6 +16,7 @@ export default function CompetitionDetailPage({
 }) {
   const { slug } = use(params);
   const competition = useCompetition(slug);
+  const [activeImage, setActiveImage] = useState(0);
 
   if (!competition) {
     return (
@@ -32,6 +33,7 @@ export default function CompetitionDetailPage({
     );
   }
 
+  const images = competition.images && competition.images.length > 0 ? competition.images : [competition.imageUrl];
   const remaining = competition.totalTickets - competition.ticketsSold;
   const soldPct = percentSold(competition.ticketsSold, competition.totalTickets);
   const thresholdMet = soldPct >= competition.minimumSoldPercentage;
@@ -52,7 +54,7 @@ export default function CompetitionDetailPage({
         <div className="animate-fade-in-up lg:col-span-3 space-y-6">
           <div className="relative aspect-[16/10] bg-card rounded-2xl overflow-hidden border border-border">
             <Image
-              src={competition.imageUrl}
+              src={images[activeImage] ?? images[0]}
               alt={competition.title}
               fill
               className="object-cover"
@@ -68,6 +70,23 @@ export default function CompetitionDetailPage({
               {competition.category}
             </div>
           </div>
+
+          {images.length > 1 && (
+            <div className="flex gap-3 overflow-x-auto pb-1">
+              {images.map((img, index) => (
+                <button
+                  key={img + index}
+                  onClick={() => setActiveImage(index)}
+                  className={`relative shrink-0 w-20 h-16 rounded-xl overflow-hidden border-2 transition-colors ${
+                    index === activeImage ? 'border-primary' : 'border-border hover:border-primary/50'
+                  }`}
+                  aria-label={`Show image ${index + 1}`}
+                >
+                  <Image src={img} alt={`${competition.title} ${index + 1}`} fill className="object-cover" sizes="80px" />
+                </button>
+              ))}
+            </div>
+          )}
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {competition.cashAlternative && (

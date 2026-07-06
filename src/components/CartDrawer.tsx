@@ -5,11 +5,17 @@ import { useAuth } from '@/lib/auth-context';
 import { formatPrice } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
+
+interface SkillQuestion {
+  id: string;
+  question: string;
+  options: string[];
+}
 
 export default function CartDrawer() {
   const { cart, cartOpen, setCartOpen, removeFromCart, updateCartQuantity, cartTotal, cartCount, clearCart } = useStore();
@@ -19,6 +25,25 @@ export default function CartDrawer() {
   const [error, setError] = useState('');
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(null);
+  const [skillQuestion, setSkillQuestion] = useState<SkillQuestion | null>(null);
+  const [skillAnswerIndex, setSkillAnswerIndex] = useState<number | null>(null);
+
+  const fetchSkillQuestion = useCallback(async () => {
+    setSkillAnswerIndex(null);
+    try {
+      const res = await fetch('/api/skill-question');
+      const data = await res.json();
+      setSkillQuestion(data);
+    } catch {
+      setSkillQuestion(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (cartOpen && user) {
+      fetchSkillQuestion();
+    }
+  }, [cartOpen, user, fetchSkillQuestion]);
 
   const handleCheckout = async () => {
     setError('');
@@ -34,6 +59,11 @@ export default function CartDrawer() {
       return;
     }
 
+    if (!skillQuestion || skillAnswerIndex === null) {
+      setError('Please answer the question below to continue');
+      return;
+    }
+
     setCheckingOut(true);
 
     try {
@@ -46,6 +76,8 @@ export default function CartDrawer() {
             quantity: item.quantity,
           })),
           turnstileToken,
+          skillQuestionId: skillQuestion.id,
+          skillAnswerIndex,
         }),
       });
 
@@ -54,6 +86,7 @@ export default function CartDrawer() {
       if (!res.ok) {
         setError(data.error || 'Checkout failed');
         setCheckingOut(false);
+        fetchSkillQuestion();
         return;
       }
 
@@ -66,6 +99,7 @@ export default function CartDrawer() {
       setCheckingOut(false);
       turnstileRef.current?.reset();
       setTurnstileToken(null);
+      fetchSkillQuestion();
     }
   };
 
@@ -175,6 +209,27 @@ export default function CartDrawer() {
               <span className="text-muted font-semibold">Total</span>
               <span className="text-xl font-black text-foreground">{formatPrice(cartTotal)}</span>
             </div>
+            {user && skillQuestion && (
+              <div className="bg-background border border-border rounded-xl p-4 space-y-3">
+                <p className="text-sm font-bold text-foreground">{skillQuestion.question}</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {skillQuestion.options.map((option, index) => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => setSkillAnswerIndex(index)}
+                      className={`px-3 py-2 rounded-lg text-sm font-bold transition-all ${
+                        skillAnswerIndex === index
+                          ? 'bg-primary text-background glow-primary'
+                          : 'bg-card border border-border text-muted hover:text-foreground hover:border-primary/50'
+                      }`}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             {user && (
               <div className="flex justify-center">
                 <Turnstile
@@ -189,7 +244,7 @@ export default function CartDrawer() {
             )}
             <button
               onClick={handleCheckout}
-              disabled={checkingOut || (!!user && !turnstileToken)}
+              disabled={checkingOut || (!!user && (!turnstileToken || skillAnswerIndex === null))}
               className="w-full py-4 bg-primary hover:bg-primary-light text-background font-black text-lg rounded-xl transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 glow-primary"
             >
               {checkingOut ? (

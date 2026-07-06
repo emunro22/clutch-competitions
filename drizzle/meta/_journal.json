@@ -57,6 +57,13 @@
       "when": 1783339423605,
       "tag": "0007_add_user_address_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1783354831972,
+      "tag": "0008_competition_images",
+      "breakpoints": true
     }
   ]
 }
