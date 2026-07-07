@@ -9,7 +9,7 @@ function getResend() {
 
 const NOTIFICATION_EMAIL = 'Decolow@icloud.com';
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Clutch Competitions <noreply@clutchcompetitions.co.uk>';
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://clutchcompetitions.co.uk';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://clutch-competitions.vercel.app';
 const LOGO_URL = `${APP_URL}/logo.png`;
 
 // ── Shared email wrapper matching the site's dark theme ──
@@ -171,7 +171,7 @@ export async function sendInstantWinNotification({
       <div style="margin-top: 24px; text-align: center;">
         <p style="color: #94A3B8; font-size: 13px; margin: 0 0 16px 0;">Log in to your account to reveal and claim your prize.</p>
         <div style="display: inline-block; background: linear-gradient(135deg, #F59E0B, #FBBF24); border-radius: 12px; padding: 14px 32px;">
-          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://clutchcompetitions.co.uk'}/account/tickets" style="color: #0A0E1A; text-decoration: none; font-weight: 800; font-size: 15px;">View My Win</a>
+          <a href="${APP_URL}/account/tickets" style="color: #0A0E1A; text-decoration: none; font-weight: 800; font-size: 15px;">View My Win</a>
         </div>
       </div>
     `),
@@ -310,7 +310,7 @@ export async function sendSignupNotification({
       </div>
       <div style="text-align: center; margin-top: 28px;">
         <div style="display: inline-block; background: linear-gradient(135deg, #F59E0B, #FBBF24); border-radius: 12px; padding: 14px 32px;">
-          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://clutchcompetitions.co.uk'}/competitions" style="color: #0A0E1A; text-decoration: none; font-weight: 800; font-size: 15px;">Browse Competitions</a>
+          <a href="${APP_URL}/competitions" style="color: #0A0E1A; text-decoration: none; font-weight: 800; font-size: 15px;">Browse Competitions</a>
         </div>
       </div>
     `),
