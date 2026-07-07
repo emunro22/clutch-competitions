@@ -5,11 +5,8 @@ import { useAuth } from '@/lib/auth-context';
 import { formatPrice } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
-
-const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
 
 interface SkillQuestion {
   id: string;
@@ -23,8 +20,6 @@ export default function CartDrawer() {
   const router = useRouter();
   const [checkingOut, setCheckingOut] = useState(false);
   const [error, setError] = useState('');
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const turnstileRef = useRef<TurnstileInstance>(null);
   const [skillQuestion, setSkillQuestion] = useState<SkillQuestion | null>(null);
   const [skillAnswerIndex, setSkillAnswerIndex] = useState<number | null>(null);
 
@@ -54,11 +49,6 @@ export default function CartDrawer() {
       return;
     }
 
-    if (!turnstileToken) {
-      setError('Please complete the verification check');
-      return;
-    }
-
     if (!skillQuestion || skillAnswerIndex === null) {
       setError('Please answer the question below to continue');
       return;
@@ -75,7 +65,6 @@ export default function CartDrawer() {
             competitionId: item.competitionId,
             quantity: item.quantity,
           })),
-          turnstileToken,
           skillQuestionId: skillQuestion.id,
           skillAnswerIndex,
         }),
@@ -97,8 +86,6 @@ export default function CartDrawer() {
     } catch {
       setError('Something went wrong. Please try again.');
       setCheckingOut(false);
-      turnstileRef.current?.reset();
-      setTurnstileToken(null);
       fetchSkillQuestion();
     }
   };
@@ -230,21 +217,9 @@ export default function CartDrawer() {
                 </div>
               </div>
             )}
-            {user && (
-              <div className="flex justify-center">
-                <Turnstile
-                  ref={turnstileRef}
-                  siteKey={TURNSTILE_SITE_KEY}
-                  onSuccess={setTurnstileToken}
-                  onError={() => setTurnstileToken(null)}
-                  onExpire={() => setTurnstileToken(null)}
-                  options={{ theme: 'dark', size: 'compact' }}
-                />
-              </div>
-            )}
             <button
               onClick={handleCheckout}
-              disabled={checkingOut || (!!user && (!turnstileToken || skillAnswerIndex === null))}
+              disabled={checkingOut || (!!user && skillAnswerIndex === null)}
               className="w-full py-4 bg-primary hover:bg-primary-light text-background font-black text-lg rounded-xl transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 glow-primary"
             >
               {checkingOut ? (

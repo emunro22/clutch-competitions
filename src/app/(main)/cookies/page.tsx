@@ -21,11 +21,6 @@ const sections: { title: string; body: React.ReactNode }[] = [
           These cannot be switched off.
         </li>
         <li>
-          <span className="font-bold text-foreground">Security cookies:</span> used by Cloudflare
-          Turnstile to verify you&apos;re a genuine customer and not a bot before you can
-          complete checkout.
-        </li>
-        <li>
           <span className="font-bold text-foreground">Payment cookies:</span> set by Stripe during
           checkout to securely process your payment.
         </li>

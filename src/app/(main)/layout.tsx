@@ -2,6 +2,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 import InstantWinReveal from '@/components/InstantWinReveal';
+import CookieBanner from '@/components/CookieBanner';
 import { StoreProvider } from '@/lib/store';
 import { AuthProvider } from '@/lib/auth-context';
 
@@ -18,6 +19,7 @@ export default function MainLayout({
         <Footer />
         <CartDrawer />
         <InstantWinReveal />
+        <CookieBanner />
       </StoreProvider>
     </AuthProvider>
   );
