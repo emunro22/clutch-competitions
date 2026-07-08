@@ -38,3 +38,9 @@ export function percentSold(sold: number, total: number): number {
   if (total === 0) return 0;
   return Math.round((sold / total) * 100);
 }
+
+const VIDEO_EXTENSIONS = /\.(mp4|mov|webm|m4v|avi)(\?.*)?$/i;
+
+export function isVideoUrl(url: string): boolean {
+  return VIDEO_EXTENSIONS.test(url);
+}

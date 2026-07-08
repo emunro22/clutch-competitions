@@ -4,7 +4,8 @@ import { use, useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { formatPrice } from '@/lib/utils';
+import { upload } from '@vercel/blob/client';
+import { formatPrice, isVideoUrl } from '@/lib/utils';
 
 interface Category {
   id: string;
@@ -179,15 +180,16 @@ export default function EditCompetitionPage({
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
+    setError('');
     try {
-      const form = new FormData();
-      form.append('file', file);
-      const res = await fetch('/api/upload', { method: 'POST', body: form });
-      const data = await res.json();
-      if (data.url) setImages((prev) => [...prev, data.url]);
-      else setError(data.error || 'Upload failed');
+      const blob = await upload(`competitions/${Date.now()}-${file.name}`, file, {
+        access: 'public',
+        handleUploadUrl: '/api/upload',
+        multipart: true,
+      });
+      setImages((prev) => [...prev, blob.url]);
     } catch {
-      setError('Image upload failed');
+      setError('Upload failed');
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = '';
@@ -375,17 +377,21 @@ export default function EditCompetitionPage({
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-foreground mb-1.5">Images</label>
+              <label className="block text-sm font-semibold text-foreground mb-1.5">Images &amp; Videos</label>
               <p className="text-xs text-muted mb-3 font-medium">
-                Upload one or more photos. The first image is used as the cover shown on cards and in the cart.
+                Upload one or more photos or videos. The first photo is used as the cover shown on cards and in the cart, so keep it as an image.
               </p>
-              <input type="file" ref={fileRef} accept="image/*" onChange={handleUpload} className="hidden" />
+              <input type="file" ref={fileRef} accept="image/*,video/*" onChange={handleUpload} className="hidden" />
 
               {images.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
                   {images.map((url, index) => (
                     <div key={url + index} className="relative aspect-video rounded-xl overflow-hidden border border-border group">
-                      <Image src={url} alt={`Prize ${index + 1}`} fill className="object-cover" sizes="300px" />
+                      {isVideoUrl(url) ? (
+                        <video src={url} className="absolute inset-0 w-full h-full object-cover" controls muted playsInline />
+                      ) : (
+                        <Image src={url} alt={`Prize ${index + 1}`} fill className="object-cover" sizes="300px" />
+                      )}
                       {index === 0 && (
                         <span className="absolute top-2 left-2 bg-primary text-background text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg">
                           Cover
@@ -449,7 +455,7 @@ export default function EditCompetitionPage({
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     <p className="text-sm text-muted font-medium">
-                      {images.length > 0 ? 'Click to add another image' : 'Click to upload image'}
+                      {images.length > 0 ? 'Click to add another photo or video' : 'Click to upload a photo or video'}
                     </p>
                   </>
                 )}

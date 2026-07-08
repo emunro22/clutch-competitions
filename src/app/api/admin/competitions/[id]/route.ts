@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { competitions, competitionImages } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { v4 as uuid } from 'uuid';
-import { slugify } from '@/lib/utils';
+import { slugify, isVideoUrl } from '@/lib/utils';
 
 export async function PUT(
   request: Request,
@@ -29,7 +29,7 @@ export async function PUT(
 
     const imageList: string[] | undefined = Array.isArray(body.images) ? body.images : undefined;
     if (imageList !== undefined) {
-      updates.imageUrl = imageList[0] || null;
+      updates.imageUrl = imageList.find((url) => !isVideoUrl(url)) || imageList[0] || null;
     }
 
     if (body.cashAlternative !== undefined) updates.cashAlternative = body.cashAlternative;

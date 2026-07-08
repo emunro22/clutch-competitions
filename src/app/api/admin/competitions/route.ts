@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { competitions, competitionImages } from '@/lib/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { v4 as uuid } from 'uuid';
-import { slugify } from '@/lib/utils';
+import { slugify, isVideoUrl } from '@/lib/utils';
 
 export async function GET() {
   const user = await getSession();
@@ -69,13 +69,14 @@ export async function POST(request: Request) {
     const id = uuid();
     const slug = slugify(title);
     const imageList: string[] = Array.isArray(images) ? images : [];
+    const coverImage = imageList.find((url) => !isVideoUrl(url)) || imageList[0];
 
     await db.insert(competitions).values({
       id,
       title,
       slug,
       description,
-      imageUrl: imageList[0] || imageUrl || null,
+      imageUrl: coverImage || imageUrl || null,
       cashAlternative: cashAlternative || null,
       ticketPrice,
       totalTickets,

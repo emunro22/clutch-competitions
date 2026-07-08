@@ -3,7 +3,7 @@
 import { use, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { formatPrice, formatPriceShort, percentSold } from '@/lib/utils';
+import { formatPrice, formatPriceShort, percentSold, isVideoUrl } from '@/lib/utils';
 import { useCompetition } from '@/lib/store';
 import CountdownTimer from '@/components/CountdownTimer';
 import ProgressBar from '@/components/ProgressBar';
@@ -53,14 +53,23 @@ export default function CompetitionDetailPage({
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
         <div className="animate-fade-in-up lg:col-span-3 space-y-6">
           <div className="relative aspect-[16/10] bg-card rounded-2xl overflow-hidden border border-border">
-            <Image
-              src={images[activeImage] ?? images[0]}
-              alt={competition.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 60vw"
-              priority
-            />
+            {isVideoUrl(images[activeImage] ?? images[0]) ? (
+              <video
+                src={images[activeImage] ?? images[0]}
+                className="absolute inset-0 w-full h-full object-cover"
+                controls
+                playsInline
+              />
+            ) : (
+              <Image
+                src={images[activeImage] ?? images[0]}
+                alt={competition.title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 60vw"
+                priority
+              />
+            )}
             {competition.featured && (
               <div className="absolute top-4 left-4 bg-primary text-background text-xs font-black uppercase tracking-wider px-3 py-1.5 rounded-lg">
                 Featured
@@ -82,7 +91,18 @@ export default function CompetitionDetailPage({
                   }`}
                   aria-label={`Show image ${index + 1}`}
                 >
-                  <Image src={img} alt={`${competition.title} ${index + 1}`} fill className="object-cover" sizes="80px" />
+                  {isVideoUrl(img) ? (
+                    <>
+                      <video src={img} className="absolute inset-0 w-full h-full object-cover" muted playsInline />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </div>
+                    </>
+                  ) : (
+                    <Image src={img} alt={`${competition.title} ${index + 1}`} fill className="object-cover" sizes="80px" />
+                  )}
                 </button>
               ))}
             </div>
