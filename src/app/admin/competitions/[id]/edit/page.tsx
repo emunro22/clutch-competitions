@@ -177,19 +177,21 @@ export default function EditCompetitionPage({
   };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files ?? []).slice(0, 5);
+    if (files.length === 0) return;
     setUploading(true);
     setError('');
     try {
-      const blob = await upload(`competitions/${Date.now()}-${file.name}`, file, {
-        access: 'public',
-        handleUploadUrl: '/api/upload',
-        multipart: true,
-      });
-      setImages((prev) => [...prev, blob.url]);
-    } catch {
-      setError('Upload failed');
+      for (const file of files) {
+        const blob = await upload(`competitions/${Date.now()}-${file.name}`, file, {
+          access: 'public',
+          handleUploadUrl: '/api/upload',
+          multipart: true,
+        });
+        setImages((prev) => [...prev, blob.url]);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Upload failed');
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = '';
@@ -381,7 +383,7 @@ export default function EditCompetitionPage({
               <p className="text-xs text-muted mb-3 font-medium">
                 Upload one or more photos or videos. The first photo is used as the cover shown on cards and in the cart, so keep it as an image.
               </p>
-              <input type="file" ref={fileRef} accept="image/*,video/*" onChange={handleUpload} className="hidden" />
+              <input type="file" ref={fileRef} accept="image/*,video/*" multiple onChange={handleUpload} className="hidden" />
 
               {images.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
@@ -455,8 +457,9 @@ export default function EditCompetitionPage({
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     <p className="text-sm text-muted font-medium">
-                      {images.length > 0 ? 'Click to add another photo or video' : 'Click to upload a photo or video'}
+                      {images.length > 0 ? 'Click to add more photos or videos' : 'Click to upload photos or videos'}
                     </p>
+                    <p className="text-xs text-muted mt-1">Select up to 5 at once &middot; large iPhone videos are supported</p>
                   </>
                 )}
               </button>
