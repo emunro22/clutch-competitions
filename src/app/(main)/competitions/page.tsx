@@ -44,7 +44,7 @@ export default function CompetitionsPage() {
           All Competitions
         </h1>
         <p className="text-muted text-lg font-medium">
-          Browse our full range of live competitions. Tickets from just £0.49.
+          Browse our full range of live competitions. Tickets from just £1.
         </p>
       </div>
 

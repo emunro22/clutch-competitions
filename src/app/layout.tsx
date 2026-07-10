@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     template: '%s | Clutch Competitions',
   },
   description:
-    'Win incredible prizes from dream cars to life-changing cash. The UK\'s most trusted competition platform with verified draws and real winners. Tickets from just £0.49.',
+    'Win incredible prizes from dream cars to life-changing cash. The UK\'s most trusted competition platform with verified draws and real winners. Tickets from just £1.',
   keywords: [
     'competitions UK',
     'win prizes UK',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: 'Clutch Competitions, Win Premium Prizes',
-    description: 'Win incredible prizes from dream cars to life-changing cash. Tickets from just £0.49.',
+    description: 'Win incredible prizes from dream cars to life-changing cash. Tickets from just £1.',
     siteName: 'Clutch Competitions',
     locale: 'en_GB',
     type: 'website',

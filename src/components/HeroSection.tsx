@@ -50,7 +50,7 @@ export default async function HeroSection() {
               Win Your{' '}
               <span className="gradient-text">Dream Prize</span>
               <br />
-              <span className="text-foreground">Starting From £0.49</span>
+              <span className="text-foreground">Starting From £1</span>
             </h1>
 
             <p className="animate-fade-in-up text-lg sm:text-xl text-muted max-w-2xl mx-auto lg:mx-0 mb-10 font-medium" style={{ animationDelay: '200ms' }}>

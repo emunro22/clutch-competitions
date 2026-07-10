@@ -1,3 +1,4 @@
+import AnnouncementBanner from '@/components/AnnouncementBanner';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
@@ -14,6 +15,7 @@ export default function MainLayout({
   return (
     <AuthProvider>
       <StoreProvider>
+        <AnnouncementBanner />
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
