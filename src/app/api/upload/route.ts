@@ -35,6 +35,7 @@ export async function POST(request: Request): Promise<Response> {
 
     return Response.json(jsonResponse);
   } catch (error) {
+    console.error('Blob upload token generation failed:', error);
     return Response.json(
       { error: error instanceof Error ? error.message : 'Upload failed' },
       { status: 400 }
