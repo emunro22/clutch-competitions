@@ -194,17 +194,17 @@ export async function sendWheelWinNotification({
   await resend.emails.send({
     from: FROM_EMAIL,
     to: NOTIFICATION_EMAIL,
-    subject: `Wheel Spin Won: ${prizeName} (${gameTitle})`,
+    subject: `InstaWin Won: ${prizeName} (${gameTitle})`,
     html: emailWrapper(`
       <div style="text-align: center; margin-bottom: 24px;">
-        <div style="display: inline-block; background-color: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">🎡</div>
-        <h1 style="color: #F1F5F9; font-size: 22px; font-weight: 800; margin: 16px 0 4px 0;">Wheel Spin Won</h1>
-        <p style="color: #94A3B8; font-size: 14px; margin: 0;">A customer's spin just won the wheel game</p>
+        <div style="display: inline-block; background-color: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">🎰</div>
+        <h1 style="color: #F1F5F9; font-size: 22px; font-weight: 800; margin: 16px 0 4px 0;">InstaWin Won</h1>
+        <p style="color: #94A3B8; font-size: 14px; margin: 0;">A customer just lined up 3 logos and won</p>
       </div>
       <table style="width: 100%; border-collapse: collapse;">
         ${detailRow('Customer', customerName)}
         ${detailRow('Email', customerEmail)}
-        ${detailRow('Wheel Game', gameTitle)}
+        ${detailRow('Game', gameTitle)}
         ${detailRow('Prize', prizeName, true)}
       </table>
     `),
@@ -213,21 +213,21 @@ export async function sendWheelWinNotification({
   await resend.emails.send({
     from: FROM_EMAIL,
     to: customerEmail,
-    subject: `🎡 You just won the wheel!`,
+    subject: `🎰 You just won!`,
     html: emailWrapper(`
       <div style="text-align: center; margin-bottom: 24px;">
-        <div style="display: inline-block; background-color: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">🎡</div>
+        <div style="display: inline-block; background-color: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">🎰</div>
         <h1 style="color: #F1F5F9; font-size: 22px; font-weight: 800; margin: 16px 0 4px 0;">You Won, ${customerName.split(' ')[0]}!</h1>
-        <p style="color: #94A3B8; font-size: 14px; margin: 0;">Your spin landed the prize</p>
+        <p style="color: #94A3B8; font-size: 14px; margin: 0;">You lined up 3 logos and landed the prize</p>
       </div>
       <table style="width: 100%; border-collapse: collapse;">
-        ${detailRow('Wheel Game', gameTitle)}
+        ${detailRow('Game', gameTitle)}
         ${detailRow('Prize', prizeName, true)}
       </table>
       <div style="margin-top: 24px; text-align: center;">
         <p style="color: #94A3B8; font-size: 13px; margin: 0 0 16px 0;">Our team will be in touch to arrange delivery of your prize.</p>
         <div style="display: inline-block; background: linear-gradient(135deg, #F59E0B, #FBBF24); border-radius: 12px; padding: 14px 32px;">
-          <a href="${APP_URL}/instawin" style="color: #0A0E1A; text-decoration: none; font-weight: 800; font-size: 15px;">View Wheel Games</a>
+          <a href="${APP_URL}/instawin" style="color: #0A0E1A; text-decoration: none; font-weight: 800; font-size: 15px;">View InstaWin Games</a>
         </div>
       </div>
     `),

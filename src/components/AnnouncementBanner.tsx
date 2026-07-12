@@ -4,11 +4,13 @@ import { eq, desc } from 'drizzle-orm';
 import { formatPrice } from '@/lib/utils';
 import AnnouncementMarquee from './AnnouncementMarquee';
 
-const FALLBACK_MESSAGES = [
+const GENERIC_MESSAGES = [
   'Tickets from just £1 — enter now',
   'New competitions launching soon',
   '100% Verified Draws — real winners every week',
 ];
+
+const INSTAWIN_MESSAGE = '🎰 Check out our InstaWin section too — instant prizes, no waiting!';
 
 async function getLiveCompetitionMessages() {
   try {
@@ -27,7 +29,14 @@ async function getLiveCompetitionMessages() {
 }
 
 export default async function AnnouncementBanner() {
-  const messages = await getLiveCompetitionMessages();
+  const competitionMessages = await getLiveCompetitionMessages();
 
-  return <AnnouncementMarquee messages={messages.length > 0 ? messages : FALLBACK_MESSAGES} />;
+  const messages = [
+    GENERIC_MESSAGES[0],
+    ...competitionMessages,
+    INSTAWIN_MESSAGE,
+    ...GENERIC_MESSAGES.slice(1),
+  ];
+
+  return <AnnouncementMarquee messages={messages} />;
 }

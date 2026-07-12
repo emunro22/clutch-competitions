@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/lib/auth-context';
 import { formatPrice } from '@/lib/utils';
-import WheelSpin from '@/components/WheelSpin';
+import SlotMachine from '@/components/SlotMachine';
 
 interface WheelGame {
   id: string;
@@ -122,10 +122,10 @@ export default function WheelGamePage() {
   if (!game) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-20 text-center">
-        <p className="text-4xl mb-4">🎡</p>
-        <h1 className="text-xl font-bold text-foreground mb-2">Wheel Game Not Found</h1>
+        <p className="text-4xl mb-4">🎰</p>
+        <h1 className="text-xl font-bold text-foreground mb-2">Game Not Found</h1>
         <Link href="/instawin" className="text-primary hover:text-primary-light font-bold text-sm">
-          Back to Wheel Games
+          Back to InstaWin
         </Link>
       </div>
     );
@@ -148,11 +148,12 @@ export default function WheelGamePage() {
       </div>
 
       <div className="bg-card border border-border rounded-2xl p-8 flex flex-col items-center">
-        <WheelSpin
+        <SlotMachine
           spinning={phase === 'spinning'}
           isWinner={isWinner}
           onDone={() => setPhase('result')}
         />
+        <p className="text-xs text-muted font-medium mt-4">Line up 3 logos to win</p>
 
         {error && (
           <div className="bg-danger/10 border border-danger/20 text-danger text-sm font-semibold rounded-xl p-3 mt-6 w-full text-center">
@@ -176,7 +177,7 @@ export default function WheelGamePage() {
               href="/instawin"
               className="inline-block w-full px-6 py-3.5 bg-primary hover:bg-primary-light text-background font-bold rounded-xl transition-all hover:scale-105"
             >
-              See Other Wheel Games
+              See Other InstaWin Games
             </Link>
           )}
 
@@ -185,7 +186,7 @@ export default function WheelGamePage() {
           )}
 
           {phase === 'spinning' && (
-            <p className="text-sm text-muted font-semibold">Spinning...</p>
+            <p className="text-sm text-muted font-semibold">Spinning the reels...</p>
           )}
 
           {phase === 'result' && (

@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     const [game] = await db.select().from(wheelGames).where(eq(wheelGames.id, gameId)).limit(1);
 
     if (!game || game.status !== 'live') {
-      return Response.json({ error: 'This wheel game is not available' }, { status: 400 });
+      return Response.json({ error: 'This game is not available' }, { status: 400 });
     }
 
     const spinId = uuid();
