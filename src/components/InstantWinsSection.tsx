@@ -2,14 +2,12 @@ import Link from 'next/link';
 import { db } from '@/lib/db';
 import { instantWins, competitions } from '@/lib/db/schema';
 import { eq, and, isNull, sql, desc } from 'drizzle-orm';
-import { formatPrice } from '@/lib/utils';
 
 async function getQuickWinsData() {
   try {
     const rows = await db
       .select({
         prizeName: instantWins.prizeName,
-        prizeValue: instantWins.prizeValue,
         competitionTitle: competitions.title,
         competitionSlug: competitions.slug,
       })
@@ -22,21 +20,20 @@ async function getQuickWinsData() {
     const [totals] = await db
       .select({
         count: sql<number>`count(*)::int`,
-        totalValue: sql<number>`coalesce(sum(${instantWins.prizeValue}), 0)::int`,
       })
       .from(instantWins)
       .innerJoin(competitions, eq(instantWins.competitionId, competitions.id))
       .where(and(isNull(instantWins.claimedAt), eq(competitions.status, 'live')));
 
-    return { prizes: rows, count: totals?.count ?? 0, totalValue: totals?.totalValue ?? 0 };
+    return { prizes: rows, count: totals?.count ?? 0 };
   } catch (error) {
     console.error('Quick wins fetch error:', error);
-    return { prizes: [], count: 0, totalValue: 0 };
+    return { prizes: [], count: 0 };
   }
 }
 
 export default async function InstantWinsSection() {
-  const { prizes, count, totalValue } = await getQuickWinsData();
+  const { prizes, count } = await getQuickWinsData();
 
   if (count === 0) return null;
 
@@ -54,7 +51,7 @@ export default async function InstantWinsSection() {
             Certain tickets are pre-designated instant winners. Buy one, and if it&apos;s a match you find out immediately, no draw, no waiting.
             Right now there {count === 1 ? 'is' : 'are'}{' '}
             <span className="text-primary font-bold">{count} instant prize{count === 1 ? '' : 's'}</span>{' '}
-            worth <span className="text-primary font-bold">{formatPrice(totalValue)}</span> still up for grabs.
+            still up for grabs.
           </p>
         </div>
 
@@ -68,8 +65,7 @@ export default async function InstantWinsSection() {
               >
                 <p className="text-2xl mb-2">🎁</p>
                 <p className="font-bold text-foreground text-sm mb-1">{p.prizeName}</p>
-                <p className="text-xs text-muted font-medium mb-2">{p.competitionTitle}</p>
-                <p className="text-primary font-black">{formatPrice(p.prizeValue)}</p>
+                <p className="text-xs text-muted font-medium">{p.competitionTitle}</p>
               </Link>
             ))}
           </div>

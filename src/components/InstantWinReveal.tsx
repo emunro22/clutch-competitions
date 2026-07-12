@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
-import { formatPrice } from '@/lib/utils';
 
 interface InstantWin {
   id: string;
@@ -159,9 +158,7 @@ export default function InstantWinReveal() {
           <div className="rounded-xl border border-primary/30 bg-primary/10 py-8 px-4 animate-fade-in-up">
             <p className="text-3xl mb-2">🎉</p>
             <p className="text-lg font-black text-foreground mb-1">{current.prizeName}</p>
-            <p className="text-sm text-muted font-semibold">
-              Worth {formatPrice(current.prizeValue)}
-            </p>
+            <p className="text-sm text-muted font-semibold">You won this prize!</p>
           </div>
         )}
 
