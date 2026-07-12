@@ -116,6 +116,65 @@ export async function sendOrderNotification({
   });
 }
 
+// ── Spin purchase notification ──
+
+export async function sendSpinOrderNotification({
+  customerName,
+  customerEmail,
+  gameTitle,
+  pricePence,
+}: {
+  customerName: string;
+  customerEmail: string;
+  gameTitle: string;
+  pricePence: number;
+}) {
+  const price = `£${(pricePence / 100).toFixed(2)}`;
+  const resend = getResend();
+
+  // Admin notification
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: NOTIFICATION_EMAIL,
+    subject: `New Spin Purchase: ${gameTitle}`,
+    html: emailWrapper(`
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="display: inline-block; background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">🎰</div>
+        <h1 style="color: #F1F5F9; font-size: 22px; font-weight: 800; margin: 16px 0 4px 0;">New Spin Purchase</h1>
+        <p style="color: #94A3B8; font-size: 14px; margin: 0;">A customer just paid to spin</p>
+      </div>
+      <table style="width: 100%; border-collapse: collapse;">
+        ${detailRow('Customer', customerName)}
+        ${detailRow('Email', customerEmail)}
+        ${detailRow('Game', gameTitle)}
+        ${detailRow('Price Paid', price, true)}
+      </table>
+    `),
+  });
+
+  // Customer confirmation
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: customerEmail,
+    subject: `Spin confirmed, ${gameTitle}`,
+    html: emailWrapper(`
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="display: inline-block; background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">✅</div>
+        <h1 style="color: #F1F5F9; font-size: 22px; font-weight: 800; margin: 16px 0 4px 0;">Spin Confirmed!</h1>
+        <p style="color: #94A3B8; font-size: 14px; margin: 0;">Hi ${customerName}, your payment went through</p>
+      </div>
+      <table style="width: 100%; border-collapse: collapse;">
+        ${detailRow('Game', gameTitle)}
+        ${detailRow('Price Paid', price, true)}
+      </table>
+      <div style="margin-top: 24px; text-align: center;">
+        <p style="color: #10B981; font-size: 14px; font-weight: 700; margin: 0 0 8px 0;">Good luck! 🍀</p>
+        <p style="color: #94A3B8; font-size: 13px; margin: 0;">Head back to the game to see your result.</p>
+      </div>
+    `),
+  });
+}
+
 // ── Instant win notification ──
 
 export async function sendInstantWinNotification({

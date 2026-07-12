@@ -1,8 +1,8 @@
 import { stripe } from '@/lib/stripe';
 import { db } from '@/lib/db';
-import { orders, tickets, competitions, users, wheelSpins } from '@/lib/db/schema';
+import { orders, tickets, competitions, users, wheelSpins, wheelGames } from '@/lib/db/schema';
 import { eq, sql } from 'drizzle-orm';
-import { sendOrderNotification } from '@/lib/email';
+import { sendOrderNotification, sendSpinOrderNotification } from '@/lib/email';
 import { claimInstantWins } from '@/lib/instant-wins';
 import { resolveSpin } from '@/lib/wheel';
 import { v4 as uuid } from 'uuid';
@@ -39,6 +39,26 @@ export async function POST(request: Request) {
           .update(wheelSpins)
           .set({ status: 'paid', stripeSessionId: session.id })
           .where(eq(wheelSpins.id, spinId));
+
+        const [game] = await db.select().from(wheelGames).where(eq(wheelGames.id, spin.gameId)).limit(1);
+        const [user] = await db
+          .select({ name: users.name, email: users.email })
+          .from(users)
+          .where(eq(users.id, spin.userId))
+          .limit(1);
+
+        if (game && user) {
+          try {
+            await sendSpinOrderNotification({
+              customerName: user.name,
+              customerEmail: user.email,
+              gameTitle: game.title,
+              pricePence: spin.pricePence,
+            });
+          } catch (emailError) {
+            console.error('Failed to send spin order notification email:', emailError);
+          }
+        }
 
         try {
           await resolveSpin(spin.gameId, spin.id, spin.userId, spin.pricePence);

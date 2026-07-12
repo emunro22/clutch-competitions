@@ -64,6 +64,11 @@ export default function SlotMachine({ spinning, isWinner, onDone }: SlotMachineP
   const [strips, setStrips] = useState<ReelSymbol[][] | null>(null);
   const [offsets, setOffsets] = useState<number[]>([0, 0, 0]);
   const startedRef = useRef(false);
+  const onDoneRef = useRef(onDone);
+
+  useEffect(() => {
+    onDoneRef.current = onDone;
+  }, [onDone]);
 
   useEffect(() => {
     if (!spinning || startedRef.current) return;
@@ -79,13 +84,16 @@ export default function SlotMachine({ spinning, isWinner, onDone }: SlotMachineP
     });
 
     const totalDuration = BASE_DURATION + (REEL_COUNT - 1) * STAGGER + 300;
-    const timer = setTimeout(() => onDone?.(), totalDuration);
+    const timer = setTimeout(() => onDoneRef.current?.(), totalDuration);
 
     return () => {
       cancelAnimationFrame(raf);
       clearTimeout(timer);
     };
-  }, [spinning, isWinner, onDone]);
+    // onDone is intentionally excluded: it's an inline prop that changes identity
+    // on every parent re-render, and including it would cancel+never-reschedule
+    // this timer on re-render since startedRef blocks the effect from restarting.
+  }, [spinning, isWinner]);
 
   const displayStrips = strips ?? Array.from({ length: REEL_COUNT }, () => [EMOJI_SYMBOLS[0]]);
 
