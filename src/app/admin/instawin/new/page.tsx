@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { upload } from '@vercel/blob/client';
 
-export default function NewWheelGamePage() {
+export default function NewInstaWinGamePage() {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [saving, setSaving] = useState(false);
@@ -62,12 +62,12 @@ export default function NewWheelGamePage() {
 
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || 'Failed to create wheel game');
+        setError(data.error || 'Failed to create InstaWin game');
         setSaving(false);
         return;
       }
 
-      router.push('/admin/wheel');
+      router.push('/admin/instawin');
     } catch {
       setError('Something went wrong');
       setSaving(false);
@@ -78,16 +78,16 @@ export default function NewWheelGamePage() {
     <div className="max-w-3xl mx-auto">
       <div className="animate-fade-in-up">
         <div className="flex items-center gap-2 text-sm text-muted mb-6 font-medium">
-          <Link href="/admin/wheel" className="hover:text-foreground transition-colors">
-            Wheel Games
+          <Link href="/admin/instawin" className="hover:text-foreground transition-colors">
+            InstaWin
           </Link>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
-          <span className="text-foreground">New Wheel Game</span>
+          <span className="text-foreground">New InstaWin Game</span>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-8">Create Wheel Game</h1>
+        <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-8">Create InstaWin Game</h1>
 
         {error && (
           <div className="bg-danger/10 border border-danger/20 text-danger text-sm font-semibold rounded-xl p-3 mb-6">
@@ -110,7 +110,7 @@ export default function NewWheelGamePage() {
 
               {imageUrl && (
                 <div className="relative aspect-video rounded-xl overflow-hidden border border-border mb-3 max-w-xs">
-                  <Image src={imageUrl} alt="Wheel game" fill className="object-cover" sizes="300px" />
+                  <Image src={imageUrl} alt="InstaWin game" fill className="object-cover" sizes="300px" />
                 </div>
               )}
 
@@ -140,15 +140,15 @@ export default function NewWheelGamePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-1.5">Price Per Spin (£)</label>
-                <input type="number" required step="0.01" value={pricePerSpin} onChange={(e) => setPricePerSpin(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="1.00" />
+                <input type="number" required min="0" step="0.01" value={pricePerSpin} onChange={(e) => setPricePerSpin(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="1.00" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-1.5">Profit Target (£)</label>
-                <input type="number" required step="0.01" value={profitTarget} onChange={(e) => setProfitTarget(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="500.00" />
+                <input type="number" required min="0" step="0.01" value={profitTarget} onChange={(e) => setProfitTarget(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="500.00" />
               </div>
             </div>
             <p className="text-xs text-muted font-medium">
-              Spins are unlimited. Every spin is a &quot;no win&quot; until cumulative spin revenue reaches this target, at which point that spin wins and the game closes automatically.
+              Spins are unlimited. Every spin is a &quot;no win&quot; until cumulative spin revenue reaches this target, at which point that spin wins and the game closes automatically. Set to 0 for testing.
             </p>
           </div>
 
@@ -167,13 +167,13 @@ export default function NewWheelGamePage() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-1.5">Prize Value (£, admin-only)</label>
-                <input type="number" required step="0.01" value={prizeValue} onChange={(e) => setPrizeValue(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="450.00" />
+                <input type="number" required min="0" step="0.01" value={prizeValue} onChange={(e) => setPrizeValue(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="450.00" />
               </div>
             </div>
           </div>
 
           <div className="flex items-center justify-end gap-4">
-            <Link href="/admin/wheel" className="px-5 py-2.5 text-sm font-bold text-muted hover:text-foreground transition-colors">
+            <Link href="/admin/instawin" className="px-5 py-2.5 text-sm font-bold text-muted hover:text-foreground transition-colors">
               Cancel
             </Link>
             <button
@@ -181,7 +181,7 @@ export default function NewWheelGamePage() {
               disabled={saving}
               className="px-6 py-2.5 bg-primary hover:bg-primary-light text-background font-bold text-sm rounded-xl transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
             >
-              {saving ? 'Creating...' : 'Create Wheel Game'}
+              {saving ? 'Creating...' : 'Create InstaWin Game'}
             </button>
           </div>
         </form>

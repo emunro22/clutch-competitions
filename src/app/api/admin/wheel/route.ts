@@ -26,7 +26,13 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { title, imageUrl, pricePerSpin, profitTarget, prizeName, prizeValue } = body;
 
-    if (!title || !pricePerSpin || !profitTarget || !prizeName || !prizeValue) {
+    if (
+      !title ||
+      typeof pricePerSpin !== 'number' ||
+      typeof profitTarget !== 'number' ||
+      !prizeName ||
+      typeof prizeValue !== 'number'
+    ) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 

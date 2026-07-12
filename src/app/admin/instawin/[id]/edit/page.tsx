@@ -20,7 +20,7 @@ interface WheelGame {
   status: 'live' | 'won' | 'closed';
 }
 
-export default function EditWheelGamePage() {
+export default function EditInstaWinGamePage() {
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
@@ -102,12 +102,12 @@ export default function EditWheelGamePage() {
 
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || 'Failed to update wheel game');
+        setError(data.error || 'Failed to update InstaWin game');
         setSaving(false);
         return;
       }
 
-      router.push('/admin/wheel');
+      router.push('/admin/instawin');
     } catch {
       setError('Something went wrong');
       setSaving(false);
@@ -139,7 +139,7 @@ export default function EditWheelGamePage() {
 
   if (!game) {
     return (
-      <div className="max-w-3xl mx-auto text-center py-16 text-muted">Wheel game not found.</div>
+      <div className="max-w-3xl mx-auto text-center py-16 text-muted">InstaWin game not found.</div>
     );
   }
 
@@ -147,8 +147,8 @@ export default function EditWheelGamePage() {
     <div className="max-w-3xl mx-auto">
       <div className="animate-fade-in-up">
         <div className="flex items-center gap-2 text-sm text-muted mb-6 font-medium">
-          <Link href="/admin/wheel" className="hover:text-foreground transition-colors">
-            Wheel Games
+          <Link href="/admin/instawin" className="hover:text-foreground transition-colors">
+            InstaWin
           </Link>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -157,7 +157,7 @@ export default function EditWheelGamePage() {
         </div>
 
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl sm:text-3xl font-black text-foreground">Edit Wheel Game</h1>
+          <h1 className="text-2xl sm:text-3xl font-black text-foreground">Edit InstaWin Game</h1>
           <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
             game.status === 'live' ? 'bg-success/10 text-success' :
             game.status === 'won' ? 'bg-primary/10 text-primary' :
@@ -199,7 +199,7 @@ export default function EditWheelGamePage() {
 
               {imageUrl && (
                 <div className="relative aspect-video rounded-xl overflow-hidden border border-border mb-3 max-w-xs">
-                  <Image src={imageUrl} alt="Wheel game" fill className="object-cover" sizes="300px" />
+                  <Image src={imageUrl} alt="InstaWin game" fill className="object-cover" sizes="300px" />
                 </div>
               )}
 
@@ -229,11 +229,11 @@ export default function EditWheelGamePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-1.5">Price Per Spin (£)</label>
-                <input type="number" required step="0.01" value={pricePerSpin} onChange={(e) => setPricePerSpin(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors" />
+                <input type="number" required min="0" step="0.01" value={pricePerSpin} onChange={(e) => setPricePerSpin(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-1.5">Profit Target (£)</label>
-                <input type="number" required step="0.01" value={profitTarget} onChange={(e) => setProfitTarget(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors" />
+                <input type="number" required min="0" step="0.01" value={profitTarget} onChange={(e) => setProfitTarget(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors" />
               </div>
             </div>
           </div>
@@ -253,7 +253,7 @@ export default function EditWheelGamePage() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-1.5">Prize Value (£, admin-only)</label>
-                <input type="number" required step="0.01" value={prizeValue} onChange={(e) => setPrizeValue(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors" />
+                <input type="number" required min="0" step="0.01" value={prizeValue} onChange={(e) => setPrizeValue(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors" />
               </div>
             </div>
           </div>
@@ -269,7 +269,7 @@ export default function EditWheelGamePage() {
               </button>
             ) : <span />}
             <div className="flex items-center gap-4">
-              <Link href="/admin/wheel" className="px-5 py-2.5 text-sm font-bold text-muted hover:text-foreground transition-colors">
+              <Link href="/admin/instawin" className="px-5 py-2.5 text-sm font-bold text-muted hover:text-foreground transition-colors">
                 Cancel
               </Link>
               <button
