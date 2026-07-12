@@ -129,6 +129,32 @@ export default function EditInstaWinGamePage() {
     }
   };
 
+  const handleReactivate = async () => {
+    if (!confirm('Reactivate this game? Revenue resets to £0 and the profit target must be earned again before the next winner is picked.')) return;
+
+    try {
+      const res = await fetch(`/api/admin/wheel/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'live' }),
+      });
+      if (res.ok) load();
+    } catch (err) {
+      console.error('Failed to reactivate game:', err);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!confirm('Delete this game permanently? This cannot be undone.')) return;
+
+    try {
+      const res = await fetch(`/api/admin/wheel/${id}`, { method: 'DELETE' });
+      if (res.ok) router.push('/admin/instawin');
+    } catch (err) {
+      console.error('Failed to delete game:', err);
+    }
+  };
+
   if (loading) {
     return (
       <div className="max-w-3xl mx-auto flex items-center justify-center min-h-[60vh]">
@@ -259,15 +285,32 @@ export default function EditInstaWinGamePage() {
           </div>
 
           <div className="flex items-center justify-between gap-4">
-            {game.status === 'live' ? (
+            <div className="flex items-center gap-4">
+              {game.status === 'live' ? (
+                <button
+                  type="button"
+                  onClick={handleCloseGame}
+                  className="px-5 py-2.5 text-sm font-bold text-danger hover:text-danger/80 transition-colors"
+                >
+                  Close Game
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleReactivate}
+                  className="px-5 py-2.5 text-sm font-bold text-primary hover:text-primary-light transition-colors"
+                >
+                  Reactivate Game
+                </button>
+              )}
               <button
                 type="button"
-                onClick={handleCloseGame}
+                onClick={handleDelete}
                 className="px-5 py-2.5 text-sm font-bold text-danger hover:text-danger/80 transition-colors"
               >
-                Close Game
+                Delete Game
               </button>
-            ) : <span />}
+            </div>
             <div className="flex items-center gap-4">
               <Link href="/admin/instawin" className="px-5 py-2.5 text-sm font-bold text-muted hover:text-foreground transition-colors">
                 Cancel

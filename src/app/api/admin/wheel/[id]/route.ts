@@ -41,7 +41,17 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     if (body.profitTarget !== undefined) updates.profitTarget = body.profitTarget;
     if (body.prizeName !== undefined) updates.prizeName = body.prizeName;
     if (body.prizeValue !== undefined) updates.prizeValue = body.prizeValue;
-    if (body.status !== undefined) updates.status = body.status;
+    if (body.status !== undefined) {
+      updates.status = body.status;
+      // Reactivating a won/closed game starts a fresh round: clear the previous
+      // win and reset revenue so the profit target must be earned again.
+      if (body.status === 'live') {
+        updates.revenuePence = 0;
+        updates.winningSpinId = null;
+        updates.winnerUserId = null;
+        updates.wonAt = null;
+      }
+    }
 
     await db.update(wheelGames).set(updates).where(eq(wheelGames.id, id));
 
