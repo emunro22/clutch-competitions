@@ -1,9 +1,10 @@
 import { stripe } from '@/lib/stripe';
 import { db } from '@/lib/db';
-import { orders, tickets, competitions, users } from '@/lib/db/schema';
+import { orders, tickets, competitions, users, wheelSpins } from '@/lib/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { sendOrderNotification } from '@/lib/email';
 import { claimInstantWins } from '@/lib/instant-wins';
+import { resolveSpin } from '@/lib/wheel';
 import { v4 as uuid } from 'uuid';
 
 export async function POST(request: Request) {
@@ -28,7 +29,26 @@ export async function POST(request: Request) {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    const { userId, userName, orderIds } = session.metadata || {};
+    const { userId, orderIds, spinId } = session.metadata || {};
+
+    if (spinId) {
+      const [spin] = await db.select().from(wheelSpins).where(eq(wheelSpins.id, spinId)).limit(1);
+
+      if (spin && spin.status !== 'paid') {
+        await db
+          .update(wheelSpins)
+          .set({ status: 'paid', stripeSessionId: session.id })
+          .where(eq(wheelSpins.id, spinId));
+
+        try {
+          await resolveSpin(spin.gameId, spin.id, spin.userId, spin.pricePence);
+        } catch (spinError) {
+          console.error('Failed to resolve wheel spin:', spinError);
+        }
+      }
+
+      return Response.json({ received: true });
+    }
 
     if (!userId || !orderIds) {
       console.error('Missing metadata in checkout session');

@@ -28,6 +28,10 @@ export const instaWinDisplayModeEnum = pgEnum('insta_win_display_mode', [
   'jackpot',
 ]);
 
+export const wheelGameStatusEnum = pgEnum('wheel_game_status', ['live', 'won', 'closed']);
+
+export const wheelSpinStatusEnum = pgEnum('wheel_spin_status', ['pending', 'paid', 'failed']);
+
 export const users = pgTable('users', {
   id: text('id').primaryKey(),
   email: varchar('email', { length: 255 }).notNull().unique(),
@@ -141,5 +145,41 @@ export const instantWins = pgTable('instant_wins', {
   matchedAt: timestamp('matched_at'),
   claimedAt: timestamp('claimed_at'),
   revealedAt: timestamp('revealed_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// Pay-per-spin wheel games: a fixed price per spin accumulates into
+// revenuePence. There is no ticket/inventory limit - spins are unlimited
+// until cumulative revenue reaches profitTarget, at which point the spin
+// that crossed it wins and the game closes (status: 'won'). A single
+// conditional UPDATE ... WHERE status = 'live' is used as a compare-and-swap
+// so only one concurrent spin can ever win (see src/lib/wheel.ts) since the
+// neon-http driver doesn't support multi-statement transactions.
+export const wheelGames = pgTable('wheel_games', {
+  id: text('id').primaryKey(),
+  title: varchar('title', { length: 500 }).notNull(),
+  slug: varchar('slug', { length: 500 }).notNull().unique(),
+  imageUrl: text('image_url'),
+  pricePerSpin: integer('price_per_spin').notNull(),
+  profitTarget: integer('profit_target').notNull(),
+  prizeName: varchar('prize_name', { length: 255 }).notNull(),
+  prizeValue: integer('prize_value').notNull(),
+  revenuePence: integer('revenue_pence').default(0).notNull(),
+  status: wheelGameStatusEnum('status').default('live').notNull(),
+  winningSpinId: text('winning_spin_id'),
+  winnerUserId: text('winner_user_id').references(() => users.id, { onDelete: 'set null' }),
+  wonAt: timestamp('won_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const wheelSpins = pgTable('wheel_spins', {
+  id: text('id').primaryKey(),
+  gameId: text('game_id').references(() => wheelGames.id, { onDelete: 'cascade' }).notNull(),
+  userId: text('user_id').references(() => users.id).notNull(),
+  pricePence: integer('price_pence').notNull(),
+  status: wheelSpinStatusEnum('status').default('pending').notNull(),
+  isWinner: boolean('is_winner').default(false).notNull(),
+  stripeSessionId: text('stripe_session_id'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });

@@ -64,6 +64,13 @@
       "when": 1783354831972,
       "tag": "0008_competition_images",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1783892797018,
+      "tag": "0009_eager_bishop",
+      "breakpoints": true
     }
   ]
 }
