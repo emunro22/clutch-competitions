@@ -72,14 +72,14 @@ export default function CompetitionCard({ competition, index = 0 }: CompetitionC
               threshold={competition.minimumSoldPercentage}
             />
 
-            <div className="flex items-center justify-between pt-1">
-              <div>
+            <div className="pt-1 space-y-2">
+              <div className="flex items-center justify-between">
                 <p className="text-[9px] text-muted uppercase tracking-wider font-semibold">Ticket Price</p>
                 <p className="text-base font-black text-foreground">
                   {formatPrice(competition.ticketPrice)}
                 </p>
               </div>
-              <div className="bg-primary hover:bg-primary-light text-background font-bold text-xs px-3.5 py-2 rounded-lg transition-all group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-primary/20">
+              <div className="w-full text-center bg-primary hover:bg-primary-light text-background font-bold text-xs py-2 rounded-lg transition-all group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-primary/20">
                 Enter Now
               </div>
             </div>

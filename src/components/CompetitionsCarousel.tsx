@@ -57,7 +57,7 @@ function CarouselSlide({
           </div>
         )}
 
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-background/85 backdrop-blur-sm text-white text-[11px] sm:text-xs font-bold px-4 py-1.5 rounded-full whitespace-nowrap">
+        <div className="absolute top-3 right-3 bg-background/85 backdrop-blur-sm text-white text-[11px] sm:text-xs font-bold px-4 py-1.5 rounded-full whitespace-nowrap">
           {time.total <= 0 ? 'Draw Complete' : time.days > 0 ? `Ends in ${time.days} day${time.days === 1 ? '' : 's'}` : 'Ends today'}
         </div>
 

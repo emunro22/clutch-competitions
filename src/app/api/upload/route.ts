@@ -19,6 +19,7 @@ export async function POST(request: Request): Promise<Response> {
             'image/jpeg',
             'image/png',
             'image/webp',
+            'image/avif',
             'image/gif',
             'image/heic',
             'image/heif',

@@ -5,10 +5,9 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { useStore } from '@/lib/store';
 import { useAuth } from '@/lib/auth-context';
+import { CompetitionsDesktopMenu, CompetitionsMobileMenu } from './CompetitionsNavMenu';
 
 const navLinks = [
-  { href: '/competitions', label: 'Competitions' },
-  { href: '/#instawin-games', label: 'InstaWin' },
   { href: '/winners', label: 'Winners' },
   { href: '/how-it-works', label: 'How It Works' },
   { href: '/faq', label: 'FAQ' },
@@ -143,6 +142,7 @@ export default function Navbar() {
           </Link>
 
           <div className="hidden lg:flex items-center gap-0.5 xl:gap-1">
+            <CompetitionsDesktopMenu />
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -181,6 +181,7 @@ export default function Navbar() {
         }`}
       >
         <div className="px-4 py-4 space-y-1">
+          <CompetitionsMobileMenu onNavigate={() => setMobileOpen(false)} />
           {navLinks.map((link) => (
             <Link
               key={link.href}

@@ -1,15 +1,17 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { Suspense, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import CompetitionCard from '@/components/CompetitionCard';
 import CategoryFilter from '@/components/CategoryFilter';
 import { useCompetitions } from '@/lib/store';
 
 type SortOption = 'ending-soon' | 'price-low' | 'price-high' | 'popularity';
 
-export default function CompetitionsPage() {
+function CompetitionsPageContent() {
   const competitions = useCompetitions();
-  const [activeCategory, setActiveCategory] = useState('all');
+  const searchParams = useSearchParams();
+  const [activeCategory, setActiveCategory] = useState(searchParams.get('category') ?? 'all');
   const [sortBy, setSortBy] = useState<SortOption>('ending-soon');
 
   const filtered = useMemo(() => {
@@ -81,5 +83,13 @@ export default function CompetitionsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function CompetitionsPage() {
+  return (
+    <Suspense fallback={null}>
+      <CompetitionsPageContent />
+    </Suspense>
   );
 }
