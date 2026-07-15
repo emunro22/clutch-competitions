@@ -286,7 +286,7 @@ export async function sendWheelWinNotification({
       <div style="margin-top: 24px; text-align: center;">
         <p style="color: #94A3B8; font-size: 13px; margin: 0 0 16px 0;">Our team will be in touch to arrange delivery of your prize.</p>
         <div style="display: inline-block; background: linear-gradient(135deg, #F59E0B, #FBBF24); border-radius: 12px; padding: 14px 32px;">
-          <a href="${APP_URL}/instawin" style="color: #0A0E1A; text-decoration: none; font-weight: 800; font-size: 15px;">View InstaWin Games</a>
+          <a href="${APP_URL}/#instawin-games" style="color: #0A0E1A; text-decoration: none; font-weight: 800; font-size: 15px;">View InstaWin Games</a>
         </div>
       </div>
     `),

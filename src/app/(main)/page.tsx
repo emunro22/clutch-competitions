@@ -4,6 +4,7 @@ import CompetitionGrid from '@/components/CompetitionGrid';
 import HowItWorksSection from '@/components/HowItWorksSection';
 import WinnersSection from '@/components/WinnersSection';
 import InstantWinsSection from '@/components/InstantWinsSection';
+import WheelGamesSection from '@/components/WheelGamesSection';
 import FadeIn from '@/components/FadeIn';
 import Link from 'next/link';
 
@@ -17,6 +18,7 @@ export default function HomePage() {
       <HeroSection />
       <CompetitionsCarousel />
       <InstantWinsSection />
+      <WheelGamesSection />
 
       {/* Trust Bar */}
       <section className="py-6 bg-surface border-y border-border">

@@ -124,7 +124,7 @@ export default function WheelGamePage() {
       <div className="max-w-2xl mx-auto px-4 py-20 text-center">
         <p className="text-4xl mb-4">🎰</p>
         <h1 className="text-xl font-bold text-foreground mb-2">Game Not Found</h1>
-        <Link href="/instawin" className="text-primary hover:text-primary-light font-bold text-sm">
+        <Link href="/#instawin-games" className="text-primary hover:text-primary-light font-bold text-sm">
           Back to InstaWin
         </Link>
       </div>
@@ -174,7 +174,7 @@ export default function WheelGamePage() {
 
           {phase === 'idle' && game.status !== 'live' && (
             <Link
-              href="/instawin"
+              href="/#instawin-games"
               className="inline-block w-full px-6 py-3.5 bg-primary hover:bg-primary-light text-background font-bold rounded-xl transition-all hover:scale-105"
             >
               See Other InstaWin Games

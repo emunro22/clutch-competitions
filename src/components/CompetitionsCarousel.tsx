@@ -1,88 +1,209 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCompetitions, useStore } from '@/lib/store';
-import CompetitionCard from './CompetitionCard';
+import { formatPrice, formatPriceShort, percentSold, getTimeRemaining } from '@/lib/utils';
+import type { Competition } from '@/lib/mock-data';
+
+function useCountdown(endDate: string) {
+  const [time, setTime] = useState(() => getTimeRemaining(endDate));
+  useEffect(() => {
+    const id = setInterval(() => setTime(getTimeRemaining(endDate)), 1000);
+    return () => clearInterval(id);
+  }, [endDate]);
+  return time;
+}
+
+function CarouselSlide({
+  competition,
+  slideRef,
+}: {
+  competition: Competition;
+  slideRef: (el: HTMLAnchorElement | null) => void;
+}) {
+  const time = useCountdown(competition.drawDate);
+  const percent = percentSold(competition.ticketsSold, competition.totalTickets);
+  const isHot = percent >= 80;
+
+  return (
+    <Link
+      ref={slideRef}
+      href={`/competitions/${competition.slug}`}
+      className="group relative shrink-0 snap-center w-[78%] sm:w-[60%] lg:w-[46%] xl:w-[38%] rounded-2xl overflow-hidden border border-border bg-card transition-transform duration-300 hover:-translate-y-1"
+    >
+      <div className="relative aspect-[4/3]">
+        <Image
+          src={competition.imageUrl}
+          alt={competition.title}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 640px) 80vw, (max-width: 1024px) 60vw, 38vw"
+        />
+
+        {competition.featured && (
+          <div className="absolute top-3 left-3 bg-primary text-background text-[10px] sm:text-xs font-black uppercase tracking-wider px-2.5 py-1 rounded-full">
+            Featured
+          </div>
+        )}
+
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-background/85 backdrop-blur-sm text-white text-[11px] sm:text-xs font-bold px-4 py-1.5 rounded-full whitespace-nowrap">
+          {time.total <= 0 ? 'Draw Complete' : time.days > 0 ? `Ends in ${time.days} day${time.days === 1 ? '' : 's'}` : 'Ends today'}
+        </div>
+
+        {isHot && (
+          <div className="absolute inset-x-0 bottom-0 bg-danger text-white text-center text-[10px] sm:text-xs font-black py-1.5 tracking-wide uppercase">
+            Selling fast &mdash; {competition.totalTickets - competition.ticketsSold} left
+          </div>
+        )}
+      </div>
+
+      <div className="relative px-4 pt-6 pb-4 text-center">
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-background text-sm font-black px-4 py-1.5 rounded-full shadow-lg whitespace-nowrap">
+          {formatPrice(competition.ticketPrice)}
+        </div>
+
+        <h3 className="text-base sm:text-lg font-black text-foreground leading-snug line-clamp-2 mt-2">
+          {competition.title}
+        </h3>
+
+        {competition.cashAlternative && (
+          <p className="text-muted text-xs sm:text-sm font-medium mt-1">
+            {formatPriceShort(competition.cashAlternative)} Cash Alternative
+          </p>
+        )}
+
+        <div className="mt-4 w-full py-3 rounded-xl bg-primary group-hover:bg-primary-light text-background font-bold text-sm sm:text-base transition-colors">
+          Enter Now
+        </div>
+      </div>
+    </Link>
+  );
+}
 
 export default function CompetitionsCarousel() {
   const competitions = useCompetitions();
   const { competitionsLoading } = useStore();
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const slideRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const items = [...competitions]
     .filter((c) => c.status === 'live')
     .sort((a, b) => Number(b.featured) - Number(a.featured));
 
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller || items.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const idx = slideRefs.current.findIndex((el) => el === entry.target);
+            if (idx !== -1) setActiveIndex(idx);
+          }
+        }
+      },
+      { root: scroller, threshold: 0.6 }
+    );
+
+    slideRefs.current.forEach((el) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, [items.length]);
+
+  const scrollToIndex = useCallback((index: number) => {
+    slideRefs.current[index]?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }, []);
+
   const scroll = (direction: 'left' | 'right') => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const cardWidth = el.firstElementChild?.clientWidth ?? 260;
-    el.scrollBy({ left: direction === 'left' ? -(cardWidth + 16) * 2 : (cardWidth + 16) * 2, behavior: 'smooth' });
+    const next = direction === 'left' ? Math.max(activeIndex - 1, 0) : Math.min(activeIndex + 1, items.length - 1);
+    scrollToIndex(next);
   };
 
   if (!competitionsLoading && items.length === 0) return null;
 
   return (
     <section className="py-6 lg:py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl sm:text-2xl font-black text-foreground">Swipe to Browse</h2>
-          <div className="hidden sm:flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => scroll('left')}
-              aria-label="Scroll left"
-              className="w-9 h-9 flex items-center justify-center rounded-full bg-card border border-border hover:border-primary/50 text-foreground transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              onClick={() => scroll('right')}
-              aria-label="Scroll right"
-              className="w-9 h-9 flex items-center justify-center rounded-full bg-card border border-border hover:border-primary/50 text-foreground transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div
-          ref={scrollerRef}
-          className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide"
-        >
-          {competitionsLoading &&
-            Array.from({ length: 5 }).map((_, i) => (
-              <div
-                key={i}
-                className="snap-start shrink-0 w-[45vw] sm:w-[220px] rounded-xl bg-card border border-border animate-pulse aspect-[4/3]"
-              />
-            ))}
-
-          {!competitionsLoading &&
-            items.map((comp, i) => (
-              <div key={comp.id} className="snap-start shrink-0 w-[45vw] sm:w-[220px]">
-                <CompetitionCard competition={comp} index={i} />
-              </div>
-            ))}
-        </div>
-
-        <div className="text-center mt-4">
-          <Link
-            href="/competitions"
-            className="inline-flex items-center gap-1 text-primary hover:text-primary-light font-bold text-sm transition-colors"
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between mb-4">
+        <h2 className="text-xl sm:text-2xl font-black text-foreground">Live Competitions</h2>
+        <div className="hidden sm:flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => scroll('left')}
+            disabled={activeIndex === 0}
+            aria-label="Previous competition"
+            className="w-9 h-9 flex items-center justify-center rounded-full bg-card border border-border hover:border-primary/50 text-foreground transition-colors disabled:opacity-30"
           >
-            See All Competitions
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => scroll('right')}
+            disabled={activeIndex >= items.length - 1}
+            aria-label="Next competition"
+            className="w-9 h-9 flex items-center justify-center rounded-full bg-card border border-border hover:border-primary/50 text-foreground transition-colors disabled:opacity-30"
+          >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-          </Link>
+          </button>
         </div>
+      </div>
+
+      <div
+        ref={scrollerRef}
+        className="flex gap-4 overflow-x-auto snap-x snap-mandatory pt-4 pb-2 px-4 sm:px-6 lg:px-8 scrollbar-hide"
+        style={{ WebkitOverflowScrolling: 'touch', scrollSnapType: 'x mandatory' }}
+      >
+        {competitionsLoading &&
+          Array.from({ length: 3 }).map((_, i) => (
+            <div
+              key={i}
+              className="snap-center shrink-0 w-[78%] sm:w-[60%] lg:w-[46%] xl:w-[38%] rounded-2xl bg-card border border-border animate-pulse aspect-[4/3]"
+            />
+          ))}
+
+        {!competitionsLoading &&
+          items.map((comp, i) => (
+            <CarouselSlide
+              key={comp.id}
+              competition={comp}
+              slideRef={(el) => {
+                slideRefs.current[i] = el;
+              }}
+            />
+          ))}
+      </div>
+
+      {items.length > 1 && (
+        <div className="flex justify-center gap-1.5 mt-4">
+          {items.map((comp, i) => (
+            <button
+              key={comp.id}
+              onClick={() => scrollToIndex(i)}
+              aria-label={`Go to competition ${i + 1}`}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === activeIndex ? 'bg-primary w-6' : 'bg-border w-1.5 hover:bg-muted'
+              }`}
+            />
+          ))}
+        </div>
+      )}
+
+      <div className="text-center mt-4">
+        <Link
+          href="/competitions"
+          className="inline-flex items-center gap-1 text-primary hover:text-primary-light font-bold text-sm transition-colors"
+        >
+          See All Competitions
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </Link>
       </div>
     </section>
   );

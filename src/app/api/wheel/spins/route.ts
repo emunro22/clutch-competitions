@@ -59,7 +59,7 @@ export async function POST(request: Request) {
         spinId,
       },
       success_url: `${origin}/instawin/${game.slug}?spin=${spinId}`,
-      cancel_url: `${origin}/instawin?cancelled=true`,
+      cancel_url: `${origin}/instawin/${game.slug}?cancelled=true`,
     });
 
     return Response.json({ url: session.url });
