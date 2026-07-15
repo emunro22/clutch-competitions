@@ -21,10 +21,12 @@ function CarouselSlide({
   competition,
   slideRef,
   onNavigate,
+  priority,
 }: {
   competition: Competition;
   slideRef: (el: HTMLAnchorElement | null) => void;
   onNavigate: (e: MouseEvent) => void;
+  priority?: boolean;
 }) {
   const time = useCountdown(competition.drawDate);
   const percent = percentSold(competition.ticketsSold, competition.totalTickets);
@@ -44,6 +46,7 @@ function CarouselSlide({
           alt={competition.title}
           fill
           draggable={false}
+          priority={priority}
           className="object-cover transition-transform duration-500 group-hover:scale-105 pointer-events-none"
           sizes="(max-width: 640px) 80vw, (max-width: 1024px) 60vw, 38vw"
         />
@@ -226,6 +229,7 @@ export default function CompetitionsCarousel() {
             <CarouselSlide
               key={comp.id}
               competition={comp}
+              priority={i === 0}
               slideRef={(el) => {
                 slideRefs.current[i] = el;
               }}
