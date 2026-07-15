@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, useEffect, useCallback } from 'react';
+import type { MouseEvent, PointerEvent } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCompetitions, useStore } from '@/lib/store';
@@ -19,9 +20,11 @@ function useCountdown(endDate: string) {
 function CarouselSlide({
   competition,
   slideRef,
+  onNavigate,
 }: {
   competition: Competition;
   slideRef: (el: HTMLAnchorElement | null) => void;
+  onNavigate: (e: MouseEvent) => void;
 }) {
   const time = useCountdown(competition.drawDate);
   const percent = percentSold(competition.ticketsSold, competition.totalTickets);
@@ -31,7 +34,8 @@ function CarouselSlide({
     <Link
       ref={slideRef}
       href={`/competitions/${competition.slug}`}
-      className="group relative shrink-0 snap-center w-[78%] sm:w-[60%] lg:w-[46%] xl:w-[38%] rounded-2xl overflow-hidden border border-border bg-card transition-transform duration-300 hover:-translate-y-1"
+      onClickCapture={onNavigate}
+      className="group relative shrink-0 snap-center w-[72%] sm:w-[52%] lg:w-[40%] xl:w-[32%] rounded-2xl overflow-hidden border border-border bg-card transition-transform duration-300 hover:-translate-y-1"
     >
       <div className="relative aspect-[4/3]">
         <Image
@@ -88,6 +92,8 @@ export default function CompetitionsCarousel() {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const isDraggingRef = useRef(false);
+  const dragState = useRef({ startX: 0, scrollLeft: 0, moved: false });
 
   const items = [...competitions]
     .filter((c) => c.status === 'live')
@@ -122,10 +128,58 @@ export default function CompetitionsCarousel() {
     scrollToIndex(next);
   };
 
+  // Auto-advance every 6s, pausing while the user is dragging.
+  useEffect(() => {
+    if (items.length <= 1) return;
+    const id = setInterval(() => {
+      if (isDraggingRef.current) return;
+      setActiveIndex((prev) => {
+        const next = prev >= items.length - 1 ? 0 : prev + 1;
+        slideRefs.current[next]?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        return next;
+      });
+    }, 6000);
+    return () => clearInterval(id);
+  }, [items.length]);
+
+  // Mouse-only drag-to-scroll; touch input is left untouched so native
+  // swipe/scroll-snap keeps working on mobile.
+  const handlePointerDown = (e: PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== 'mouse') return;
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    isDraggingRef.current = true;
+    dragState.current = { startX: e.clientX, scrollLeft: scroller.scrollLeft, moved: false };
+    scroller.style.scrollSnapType = 'none';
+    scroller.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: PointerEvent<HTMLDivElement>) => {
+    if (!isDraggingRef.current) return;
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    const delta = e.clientX - dragState.current.startX;
+    if (Math.abs(delta) > 4) dragState.current.moved = true;
+    scroller.scrollLeft = dragState.current.scrollLeft - delta;
+  };
+
+  const endDrag = () => {
+    const scroller = scrollerRef.current;
+    isDraggingRef.current = false;
+    if (scroller) scroller.style.scrollSnapType = 'x mandatory';
+  };
+
+  const handleNavigate = (e: MouseEvent) => {
+    if (dragState.current.moved) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
   if (!competitionsLoading && items.length === 0) return null;
 
   return (
-    <section className="py-6 lg:py-8">
+    <section className="pt-2 pb-6 lg:pt-3 lg:pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between mb-4">
         <h2 className="text-xl sm:text-2xl font-black text-foreground">Live Competitions</h2>
         <div className="hidden sm:flex items-center gap-2">
@@ -156,14 +210,19 @@ export default function CompetitionsCarousel() {
 
       <div
         ref={scrollerRef}
-        className="flex gap-4 overflow-x-auto snap-x snap-mandatory pt-4 pb-2 px-4 sm:px-6 lg:px-8 scrollbar-hide"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={endDrag}
+        onPointerLeave={endDrag}
+        onPointerCancel={endDrag}
+        className="flex gap-4 overflow-x-auto snap-x snap-mandatory pt-4 pb-2 px-4 sm:px-6 lg:px-8 scrollbar-hide cursor-grab active:cursor-grabbing select-none"
         style={{ WebkitOverflowScrolling: 'touch', scrollSnapType: 'x mandatory' }}
       >
         {competitionsLoading &&
           Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="snap-center shrink-0 w-[78%] sm:w-[60%] lg:w-[46%] xl:w-[38%] rounded-2xl bg-card border border-border animate-pulse aspect-[4/3]"
+              className="snap-center shrink-0 w-[72%] sm:w-[52%] lg:w-[40%] xl:w-[32%] rounded-2xl bg-card border border-border animate-pulse aspect-[4/3]"
             />
           ))}
 
@@ -175,6 +234,7 @@ export default function CompetitionsCarousel() {
               slideRef={(el) => {
                 slideRefs.current[i] = el;
               }}
+              onNavigate={handleNavigate}
             />
           ))}
       </div>

@@ -25,8 +25,8 @@ export default async function HeroSection() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/8 rounded-full blur-[120px]" />
       <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-accent/8 rounded-full blur-[100px]" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6 lg:pt-14 lg:pb-8 text-center">
-        <div className="animate-fade-in-up inline-flex items-center gap-2 bg-card border border-primary/20 rounded-full px-4 py-1.5 mb-5">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-3 lg:pt-7 lg:pb-4 text-center">
+        <div className="animate-fade-in-up inline-flex items-center gap-2 bg-card border border-primary/20 rounded-full px-4 py-1.5 mb-3">
           <div className="w-2 h-2 rounded-full bg-success pulse-live" />
           <span className="text-sm text-muted font-medium">
             {liveCount > 0 ? (
@@ -42,7 +42,7 @@ export default async function HeroSection() {
           </span>
         </div>
 
-        <h1 className="animate-fade-in-up text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-4" style={{ animationDelay: '100ms' }}>
+        <h1 className="animate-fade-in-up text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-3" style={{ animationDelay: '100ms' }}>
           Win Your <span className="gradient-text">Dream Prize</span>{' '}
           <span className="text-foreground">Starting From £1</span>
         </h1>

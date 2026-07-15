@@ -17,30 +17,6 @@ export default function HomePage() {
     <>
       <HeroSection />
       <CompetitionsCarousel />
-      <InstantWinsSection />
-      <WheelGamesSection />
-
-      {/* Trust Bar */}
-      <section className="py-6 bg-surface border-y border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
-            {[
-              { icon: '🔒', title: 'Secure Payments', desc: 'SSL encrypted checkout' },
-              { icon: '🎲', title: 'Provably Fair', desc: 'Verified random draws' },
-              { icon: '🚚', title: 'Free Delivery', desc: 'All prizes delivered free' },
-              { icon: '🇬🇧', title: 'UK Company', desc: 'Registered & regulated' },
-            ].map((item) => (
-              <div key={item.title} className="flex items-center justify-center gap-3">
-                <div className="text-2xl">{item.icon}</div>
-                <div className="text-left">
-                  <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">{item.title}</h3>
-                  <p className="text-[10px] text-muted font-medium">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Featured Competitions */}
       <section className="py-16 lg:py-24">
@@ -66,6 +42,31 @@ export default function HomePage() {
           </FadeIn>
 
           <CompetitionGrid filter="featured" />
+        </div>
+      </section>
+
+      <InstantWinsSection />
+      <WheelGamesSection />
+
+      {/* Trust Bar */}
+      <section className="py-6 bg-surface border-y border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
+            {[
+              { icon: '🔒', title: 'Secure Payments', desc: 'SSL encrypted checkout' },
+              { icon: '🎲', title: 'Provably Fair', desc: 'Verified random draws' },
+              { icon: '🚚', title: 'Free Delivery', desc: 'All prizes delivered free' },
+              { icon: '🇬🇧', title: 'UK Company', desc: 'Registered & regulated' },
+            ].map((item) => (
+              <div key={item.title} className="flex items-center justify-center gap-3">
+                <div className="text-2xl">{item.icon}</div>
+                <div className="text-left">
+                  <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">{item.title}</h3>
+                  <p className="text-[10px] text-muted font-medium">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
