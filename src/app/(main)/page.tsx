@@ -1,4 +1,5 @@
 import HeroSection from '@/components/HeroSection';
+import CompetitionsCarousel from '@/components/CompetitionsCarousel';
 import CompetitionGrid from '@/components/CompetitionGrid';
 import HowItWorksSection from '@/components/HowItWorksSection';
 import WinnersSection from '@/components/WinnersSection';
@@ -14,6 +15,8 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
+      <CompetitionsCarousel />
+      <InstantWinsSection />
 
       {/* Trust Bar */}
       <section className="py-6 bg-surface border-y border-border">
@@ -76,7 +79,7 @@ export default function HomePage() {
             </p>
           </FadeIn>
 
-          <CompetitionGrid filter="live" limit={6} />
+          <CompetitionGrid filter="live" limit={10} />
 
           <div className="text-center mt-10">
             <Link
@@ -91,8 +94,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      <InstantWinsSection />
 
       {/* CTA Banner */}
       <section className="py-16 bg-gradient-to-r from-primary/10 via-accent/5 to-primary/10">
