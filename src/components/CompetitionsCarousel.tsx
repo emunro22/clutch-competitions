@@ -128,20 +128,6 @@ export default function CompetitionsCarousel() {
     scrollToIndex(next);
   };
 
-  // Auto-advance every 6s, pausing while the user is dragging.
-  useEffect(() => {
-    if (items.length <= 1) return;
-    const id = setInterval(() => {
-      if (isDraggingRef.current) return;
-      setActiveIndex((prev) => {
-        const next = prev >= items.length - 1 ? 0 : prev + 1;
-        slideRefs.current[next]?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        return next;
-      });
-    }, 6000);
-    return () => clearInterval(id);
-  }, [items.length]);
-
   // Mouse-only drag-to-scroll; touch input is left untouched so native
   // swipe/scroll-snap keeps working on mobile.
   const handlePointerDown = (e: PointerEvent<HTMLDivElement>) => {

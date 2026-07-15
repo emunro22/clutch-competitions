@@ -32,13 +32,13 @@ export default function WheelGamesSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 bg-card border border-primary/20 rounded-full px-4 py-1.5 mb-4">
-            <span className="text-primary font-bold text-sm">🎰 InstaWin</span>
+            <span className="text-primary font-bold text-sm">⚡ InstaWin</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-foreground mb-2">
-            Play the Slots, Win Instantly
+            Win Instantly
           </h2>
           <p className="text-muted text-lg font-medium max-w-2xl mx-auto">
-            Pay a small fee to play. No tickets, no waiting for a draw &mdash; line up 3 logos to win, instantly.
+            Pay a small fee to play. No tickets, no waiting for a draw &mdash; match 3 symbols for an instant win.
           </p>
         </div>
 
