@@ -35,6 +35,7 @@ function CarouselSlide({
       ref={slideRef}
       href={`/competitions/${competition.slug}`}
       onClickCapture={onNavigate}
+      draggable={false}
       className="group relative shrink-0 snap-center w-[72%] sm:w-[52%] lg:w-[40%] xl:w-[32%] rounded-2xl overflow-hidden border border-border bg-card transition-transform duration-300 hover:-translate-y-1"
     >
       <div className="relative aspect-[4/3]">
@@ -42,7 +43,8 @@ function CarouselSlide({
           src={competition.imageUrl}
           alt={competition.title}
           fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          draggable={false}
+          className="object-cover transition-transform duration-500 group-hover:scale-105 pointer-events-none"
           sizes="(max-width: 640px) 80vw, (max-width: 1024px) 60vw, 38vw"
         />
 
@@ -93,7 +95,7 @@ export default function CompetitionsCarousel() {
   const slideRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const isDraggingRef = useRef(false);
-  const dragState = useRef({ startX: 0, scrollLeft: 0, moved: false });
+  const dragState = useRef({ startX: 0, scrollLeft: 0, moved: false, pointerId: 0 });
 
   const items = [...competitions]
     .filter((c) => c.status === 'live')
@@ -129,15 +131,16 @@ export default function CompetitionsCarousel() {
   };
 
   // Mouse-only drag-to-scroll; touch input is left untouched so native
-  // swipe/scroll-snap keeps working on mobile.
+  // swipe/scroll-snap keeps working on mobile. Pointer capture is deferred
+  // until real movement is detected — capturing on every mousedown would
+  // retarget the resulting click (even a plain, non-drag click) away from
+  // the card link, silently breaking navigation.
   const handlePointerDown = (e: PointerEvent<HTMLDivElement>) => {
     if (e.pointerType !== 'mouse') return;
     const scroller = scrollerRef.current;
     if (!scroller) return;
     isDraggingRef.current = true;
-    dragState.current = { startX: e.clientX, scrollLeft: scroller.scrollLeft, moved: false };
-    scroller.style.scrollSnapType = 'none';
-    scroller.setPointerCapture(e.pointerId);
+    dragState.current = { startX: e.clientX, scrollLeft: scroller.scrollLeft, moved: false, pointerId: e.pointerId };
   };
 
   const handlePointerMove = (e: PointerEvent<HTMLDivElement>) => {
@@ -145,8 +148,14 @@ export default function CompetitionsCarousel() {
     const scroller = scrollerRef.current;
     if (!scroller) return;
     const delta = e.clientX - dragState.current.startX;
-    if (Math.abs(delta) > 4) dragState.current.moved = true;
-    scroller.scrollLeft = dragState.current.scrollLeft - delta;
+    if (!dragState.current.moved && Math.abs(delta) > 4) {
+      dragState.current.moved = true;
+      scroller.style.scrollSnapType = 'none';
+      scroller.setPointerCapture(dragState.current.pointerId);
+    }
+    if (dragState.current.moved) {
+      scroller.scrollLeft = dragState.current.scrollLeft - delta;
+    }
   };
 
   const endDrag = () => {
