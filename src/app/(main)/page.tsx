@@ -37,8 +37,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <InstantWinsSection />
-
       {/* Featured Competitions */}
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -63,26 +61,6 @@ export default function HomePage() {
           </FadeIn>
 
           <CompetitionGrid filter="featured" />
-        </div>
-      </section>
-
-      {/* CTA Banner */}
-      <section className="py-16 bg-gradient-to-r from-primary/10 via-accent/5 to-primary/10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <FadeIn>
-            <h2 className="text-3xl sm:text-4xl font-black text-foreground mb-4">
-              Ready to Win?
-            </h2>
-            <p className="text-muted text-lg mb-8 max-w-xl mx-auto font-medium">
-              Join thousands of winners across the UK. Sign up today and get access to all our live competitions.
-            </p>
-            <Link
-              href="/auth/register"
-              className="inline-flex px-8 py-4 bg-primary hover:bg-primary-light text-background font-bold rounded-xl text-lg transition-all hover:scale-105 glow-primary"
-            >
-              Create Free Account
-            </Link>
-          </FadeIn>
         </div>
       </section>
 
@@ -111,6 +89,28 @@ export default function HomePage() {
               </svg>
             </Link>
           </div>
+        </div>
+      </section>
+
+      <InstantWinsSection />
+
+      {/* CTA Banner */}
+      <section className="py-16 bg-gradient-to-r from-primary/10 via-accent/5 to-primary/10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <FadeIn>
+            <h2 className="text-3xl sm:text-4xl font-black text-foreground mb-4">
+              Ready to Win?
+            </h2>
+            <p className="text-muted text-lg mb-8 max-w-xl mx-auto font-medium">
+              Join thousands of winners across the UK. Sign up today and get access to all our live competitions.
+            </p>
+            <Link
+              href="/auth/register"
+              className="inline-flex px-8 py-4 bg-primary hover:bg-primary-light text-background font-bold rounded-xl text-lg transition-all hover:scale-105 glow-primary"
+            >
+              Create Free Account
+            </Link>
+          </FadeIn>
         </div>
       </section>
 

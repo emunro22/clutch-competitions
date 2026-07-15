@@ -1,10 +1,16 @@
 import type { Metadata } from 'next';
-import { Montserrat } from 'next/font/google';
+import { Inter, Poppins } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
-const montserrat = Montserrat({
-  variable: '--font-montserrat',
+const inter = Inter({
+  variable: '--font-inter',
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800', '900'],
+});
+
+const poppins = Poppins({
+  variable: '--font-poppins',
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800', '900'],
 });
@@ -41,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${montserrat.variable} h-full antialiased`}>
+    <html lang="en" className={`${inter.variable} ${poppins.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         {children}
         <Analytics />

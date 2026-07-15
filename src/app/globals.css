@@ -15,8 +15,8 @@
   --color-foreground: #F1F5F9;
   --color-muted: #94A3B8;
   --color-border: #1E293B;
-  --font-heading: var(--font-montserrat);
-  --font-sans: var(--font-montserrat);
+  --font-heading: var(--font-poppins);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
 }
 
